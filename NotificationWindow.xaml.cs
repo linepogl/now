@@ -272,11 +272,13 @@ namespace Now {
 			}
 		}
 
-		private void Window_MouseLeftButtonUp(object sender, MouseButtonEventArgs e) {
+		private async void Window_MouseLeftButtonUp(object sender, MouseButtonEventArgs e) {
 			if (this.IsMouseCaptured) {
 				this.ReleaseMouseCapture();
 				if (this.IsMouseOver) {
 					Gmail.Open(this.Message);
+					await this.MarkAsRead();
+					this.AnimateHide();
 				}
 			}
 		}
