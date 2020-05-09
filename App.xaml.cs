@@ -82,10 +82,13 @@ namespace Now {
 			Timer = new System.Windows.Forms.Timer();
 			Timer.Interval = (int)FailOverSyncInterval.TotalMilliseconds;
 			Timer.Tick += Timer_Tick;
+
+			Microsoft.Win32.SystemEvents.PowerModeChanged += System_PowerModeChanged;
+			Microsoft.Win32.SystemEvents.SessionSwitch += System_SessionSwitch;
 		}
 		#endregion
 
-		private async void Application_Startup(object sender, StartupEventArgs e) {
+					private async void Application_Startup(object sender, StartupEventArgs e) {
 			this.InitialiseComponents();
 			await Gmail.Connect();
 		}
@@ -159,7 +162,19 @@ namespace Now {
 		}
 
 		private async void Timer_Tick(object sender, EventArgs e) {
-			if (Gmail.IsConnected) await Gmail.Sync(SyncInterval);
+			await (Gmail.IsConnected ? Gmail.Sync(SyncInterval) : Gmail.Connect());
+		}
+
+		private void System_SessionSwitch(object sender, Microsoft.Win32.SessionSwitchEventArgs e) {
+			if (e.Reason == Microsoft.Win32.SessionSwitchReason.SessionUnlock) {
+				this.Timer.Stop(); this.Timer.Start(); this.Timer_Tick(sender, e);
+			}
+		}
+
+		private void System_PowerModeChanged(object sender, Microsoft.Win32.PowerModeChangedEventArgs e) {
+			if (e.Mode == Microsoft.Win32.PowerModes.Resume) {
+				this.Timer.Stop(); this.Timer.Start(); this.Timer_Tick(sender, e);
+			}
 		}
 
 		private void Gmail_Synchronised() {
