@@ -15,5 +15,25 @@ namespace Now {
 		public static DateTime EpochMillisecondsToDateTime(long input) {
 			return new DateTime(UnixEpochTicks + input * TimeSpan.TicksPerMillisecond);
 		}
+
+		
+		public static string Base64UrlEncode(byte[] input) {
+			if (input == null) return null;
+			return Convert.ToBase64String(input)
+				.Replace("=", "")
+				.Replace("/", "_")
+				.Replace("+", "-");
+		}
+
+		public static byte[] Base64UrlDecode(string input) {
+			if (input == null) return null;
+
+			input = input
+					.PadRight(input.Length + (4 - input.Length % 4) % 4, '=')
+					.Replace("_", "/")
+					.Replace("-", "+");
+
+			return Convert.FromBase64String(input);
+		}
 	}
 }

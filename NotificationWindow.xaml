@@ -4,93 +4,98 @@
 				xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 				xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 				mc:Ignorable="d"
-				Height="296" Width="500" ResizeMode="NoResize" ShowInTaskbar="False" Opacity="0.9" AllowsTransparency="True" WindowStyle="None" Loaded="Window_Loaded" MouseEnter="Window_MouseEnter" MouseLeave="Window_MouseLeave" Closing="Window_Closing" KeyDown="Window_KeyDown" Topmost="True" ShowActivated="False" MouseWheel="Window_MouseWheel" Background="#F2E6E9ED" MouseLeftButtonDown="Window_MouseLeftButtonDown" MouseLeftButtonUp="Window_MouseLeftButtonUp">
-	<Grid>
-		<Rectangle Fill="White" Margin="0,0,0,184" Height="112"/>
-		<Ellipse Fill="#FFE6E9ED" HorizontalAlignment="Left" Height="80" Margin="16,16,0,0" VerticalAlignment="Top" Width="80"/>
-		<TextBlock x:Name="SenderTextBlock" Margin="112,16,96,0" TextWrapping="Wrap" Text="Lazare Inepologlou &lt;linepogl@gmail.com&gt;" VerticalAlignment="Top" Height="16" Foreground="#FF242628"/>
-		<TextBlock x:Name="SubjectTextBlock" Margin="112,34,16,0" TextWrapping="Wrap" Text="This is a test subject" VerticalAlignment="Top" FontSize="20" Height="32" Foreground="#FF242628"/>
-		<WrapPanel x:Name="LabelsPanel" Height="18" Margin="112,76,16,0" VerticalAlignment="Top">
-			<TextBlock HorizontalAlignment="Left" Margin="1,0,4,0" TextWrapping="Wrap" Text="so" VerticalAlignment="Top" Background="#FF71D561" Foreground="White" SnapsToDevicePixels="True" Padding="8,0,8,2" Height="18"/>
-			<TextBlock HorizontalAlignment="Left" Margin="1,0,3,0" TextWrapping="Wrap" Text="so/gitlab" VerticalAlignment="Top" Background="#FF61D5D0" Foreground="White" SnapsToDevicePixels="True" Padding="8,0" Height="18"/>
-		</WrapPanel>
-		<TextBlock x:Name="DropCapTextBlock" Margin="16,16,0,0" TextWrapping="Wrap" Text="X" VerticalAlignment="Top" FontSize="40" Height="80" TextAlignment="Center" HorizontalAlignment="Left" Width="80" Padding="0,11,0,0" UseLayoutRounding="False" Foreground="#FF242628"/>
-		<TextBlock x:Name="SnippetTextBlock" Margin="112,128,16,48" TextWrapping="Wrap" Foreground="#FF242628" FontFamily="Dubai Light" FontSize="14"><Run Text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus faucibus libero et magna ultrices, sit amet pellentesque eros dignissim. In egestas ornare pulvinar. Aenean aliquam pulvinar risus id aliquam. Duis ullamcorper nulla felis, vitae accumsan ante aliquet mollis. Donec maximus nunc vel pretium efficitur. Vestibulum laoreet diam sed nulla maximus, quis viverra quam vehicula. Maecenas vestibulum tempor mauris ac efficitur. Integer vitae odio vel nunc facilisis elementum. In eu ipsum viverra, sagittis urna eget, porttitor turpis. Proin risus felis, scelerisque id tellus sed, fringilla viverra enim. Vivamus luctus leo quis sollicitudin suscipit. In suscipit hendrerit lorem et pulvinar. Fusce in ipsum laoreet, finibus sem vitae, finibus justo."/><InlineUIContainer>
-				<TextBlock Height="35" TextWrapping="Wrap" Text="TextBlock" Width="47"/>
-			</InlineUIContainer></TextBlock>
-		<WrapPanel x:Name="BulletsPanel" Margin="112,0,0,16" Height="16" VerticalAlignment="Bottom" HorizontalAlignment="Left">
-			<Ellipse Fill="#FF3BAFDA" Height="8" Stroke="Black" Width="8" StrokeThickness="0" Margin="2,4,4,4"/>
-			<Ellipse Fill="White" Height="8" Stroke="Black" Width="8" StrokeThickness="0" Margin="2,4,4,4"/>
-			<Ellipse Fill="White" Height="8" Stroke="Black" Width="8" StrokeThickness="0" Margin="2,4,4,4"/>
-			<Ellipse Fill="White" Height="8" Stroke="Black" Width="8" StrokeThickness="0" Margin="2,4,4,4"/>
-			<Ellipse Fill="White" Height="8" Stroke="Black" Width="8" StrokeThickness="0" Margin="2,4,4,4"/>
-			<Ellipse Fill="White" Height="8" Stroke="Black" Width="8" StrokeThickness="0" Margin="2,4,4,4"/>
-			<Ellipse Fill="White" Height="8" Stroke="Black" Width="8" StrokeThickness="0" Margin="2,4,4,4"/>
-			<Ellipse Fill="White" Height="8" Stroke="Black" Width="8" StrokeThickness="0" Margin="2,4,4,4"/>
-			<Ellipse Fill="White" Height="8" Stroke="Black" Width="8" StrokeThickness="0" Margin="2,4,4,4"/>
-			<Ellipse Fill="White" Height="8" Stroke="Black" Width="8" StrokeThickness="0" Margin="2,4,4,4"/>
-			<Ellipse Fill="White" Height="8" Stroke="Black" Width="8" StrokeThickness="0" Margin="2,4,4,4"/>
-			<Ellipse Fill="White" Height="8" Stroke="Black" Width="8" StrokeThickness="0" Margin="2,4,4,4"/>
-			<Ellipse Fill="White" Height="8" Stroke="Black" Width="8" StrokeThickness="0" Margin="2,4,4,4"/>
-			<Ellipse Fill="White" Height="8" Stroke="Black" Width="8" StrokeThickness="0" Margin="2,4,4,4"/>
-			<Ellipse Fill="White" Height="8" Stroke="Black" Width="8" StrokeThickness="0" Margin="2,4,4,4"/>
-			<Ellipse Fill="White" Height="8" Stroke="Black" Width="8" StrokeThickness="0" Margin="2,4,4,4"/>
-			<Ellipse Fill="White" Height="8" Stroke="Black" Width="8" StrokeThickness="0" Margin="2,4,4,4"/>
-			<Ellipse Fill="White" Height="8" Stroke="Black" Width="8" StrokeThickness="0" Margin="2,4,4,4"/>
-			<Ellipse Fill="White" Height="8" Stroke="Black" Width="8" StrokeThickness="0" Margin="2,4,4,4"/>
-			<Ellipse Fill="White" Height="8" Stroke="Black" Width="8" StrokeThickness="0" Margin="2,4,4,4"/>
-		</WrapPanel>
-		<TextBlock x:Name="ButtonMarkAsRead" Margin="0,12,48,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="24" Cursor="Hand" HorizontalAlignment="Right" Width="24" MouseEnter="ButtonMarkAsRead_MouseEnter" MouseLeave="ButtonMarkAsRead_MouseLeave" ToolTip="Mark as Read" MouseLeftButtonDown="ButtonMarkAsRead_MouseLeftButtonDown" MouseLeftButtonUp="ButtonMarkAsRead_MouseLeftButtonUp">
-			<TextBlock.Background>
-				<ImageBrush ImageSource="Resources/button_mark_as_read.png" Stretch="Uniform" Opacity="0.5">
-					<ImageBrush.RelativeTransform>
-						<TransformGroup>
-							<ScaleTransform CenterY="0.5" CenterX="0.5" ScaleX="0.8" ScaleY="0.8"/>
-							<SkewTransform CenterY="0.5" CenterX="0.5"/>
-							<RotateTransform CenterY="0.5" CenterX="0.5"/>
-							<TranslateTransform Y="0.01"/>
-						</TransformGroup>
-					</ImageBrush.RelativeTransform>
-				</ImageBrush>
-			</TextBlock.Background>
-		</TextBlock>
-		<TextBlock x:Name="ButtonDelete" Margin="0,12,16,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="24" Cursor="Hand" HorizontalAlignment="Right" Width="24" MouseEnter="ButtonDelete_MouseEnter" MouseLeave="ButtonDelete_MouseLeave" ToolTip="Delete" MouseLeftButtonDown="ButtonDelete_MouseLeftButtonDown" MouseLeftButtonUp="ButtonDelete_MouseLeftButtonUp">
-			<TextBlock.Background>
-				<ImageBrush ImageSource="Resources/button_delete.png" Stretch="Uniform" Opacity="0.5">
-					<ImageBrush.RelativeTransform>
-						<TransformGroup>
-							<ScaleTransform CenterY="0.5" CenterX="0.5" ScaleX="0.9" ScaleY="0.8"/>
-							<SkewTransform CenterY="0.5" CenterX="0.5"/>
-							<RotateTransform CenterY="0.5" CenterX="0.5"/>
-							<TranslateTransform X="-0.02"/>
-						</TransformGroup>
-					</ImageBrush.RelativeTransform>
-				</ImageBrush>
-			</TextBlock.Background>
-		</TextBlock>
-		<TextBlock x:Name="StampReadTextBlock" Margin="0,56,0,0" TextWrapping="Wrap" FontSize="120" RenderTransformOrigin="0.5,0.5" TextAlignment="Center" Text="READ" FontFamily="Segoe UI Black" VerticalAlignment="Top" Visibility="Hidden">
-			<TextBlock.Foreground>
-				<SolidColorBrush Color="#19656D78"/>
-			</TextBlock.Foreground>
-			<TextBlock.RenderTransform>
-				<TransformGroup>
-					<ScaleTransform/>
-					<SkewTransform/>
-					<RotateTransform Angle="-21.355"/>
-					<TranslateTransform/>
-				</TransformGroup>
-			</TextBlock.RenderTransform></TextBlock>
-		<TextBlock x:Name="StampDeletedTextBlock" Margin="0,72,0,0" TextWrapping="Wrap" FontSize="96" RenderTransformOrigin="0.5,0.5" TextAlignment="Center" Text="DELETED" FontFamily="Segoe UI Black" VerticalAlignment="Top" Foreground="#33DA4453" Visibility="Hidden">
-			<TextBlock.RenderTransform>
-				<TransformGroup>
-					<ScaleTransform/>
-					<SkewTransform/>
-					<RotateTransform Angle="-21.355"/>
-					<TranslateTransform/>
-				</TransformGroup>
-			</TextBlock.RenderTransform></TextBlock>
-		<TextBlock x:Name="BulletsOverflowTextBlock" TextWrapping="Wrap" Text="+" Padding="0" FontWeight="Bold" Margin="393,0,0,14" FontSize="19" VerticalAlignment="Bottom" FontFamily="Segoe UI Black" Foreground="White" HorizontalAlignment="Left" Width="14"/>
-		<TextBlock x:Name="IndexTextBlock" Margin="16,264,399,0" TextWrapping="Wrap" Text="1 / 20" VerticalAlignment="Top" Height="16" Foreground="#FF54595F" TextAlignment="Right"/>
+				Height="296" Width="500" ResizeMode="NoResize" ShowInTaskbar="False" Opacity="0.9" AllowsTransparency="True" WindowStyle="None" MouseEnter="Window_MouseEnter" MouseLeave="Window_MouseLeave" Closing="Window_Closing" KeyDown="Window_KeyDown" Topmost="True" ShowActivated="False" MouseWheel="Window_MouseWheel" Background="#F2E6E9ED" MouseLeftButtonDown="Window_MouseLeftButtonDown" MouseLeftButtonUp="Window_MouseLeftButtonUp" Padding="1" Margin="0">
+	<Grid Margin="0">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="112"/>
+			<RowDefinition Height="184"/>
+			<RowDefinition/>
+		</Grid.RowDefinitions>
+		<Grid x:Name="HeaderBlock" Background="#FFFFFFFF" Margin="1,1,1,0" Grid.Row="0">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="112"/>
+				<ColumnDefinition/>
+			</Grid.ColumnDefinitions>
+			<Ellipse x:Name="DropCapEllipsis" Fill="#FFD770AD" HorizontalAlignment="Left" Height="80" Margin="16,16,0,0" VerticalAlignment="Top" Width="81"/>
+			<TextBlock x:Name="SenderTextBlock" Margin="0,16,96,0" TextWrapping="Wrap" Text="Lazare Inepologlou &lt;linepogl@gmail.com&gt;" VerticalAlignment="Top" Height="16" Foreground="#FF242628" Grid.Column="1"/>
+			<TextBlock x:Name="SubjectTextBlock" Margin="0,34,16,0" TextWrapping="Wrap" Text="This is a test subject" VerticalAlignment="Top" FontSize="20" Height="32" Foreground="#FF242628" Grid.Column="1"/>
+			<WrapPanel x:Name="LabelsPanel" Height="18" Margin="0,76,16,0" VerticalAlignment="Top" Grid.Column="1">
+				<TextBlock HorizontalAlignment="Left" Margin="1,0,4,0" TextWrapping="Wrap" Text="so" VerticalAlignment="Top" Background="#FF71D561" Foreground="White" SnapsToDevicePixels="True" Padding="8,0,8,2" Height="18"/>
+				<TextBlock HorizontalAlignment="Left" Margin="1,0,3,0" TextWrapping="Wrap" Text="so/gitlab" VerticalAlignment="Top" Background="#FF61D5D0" Foreground="White" SnapsToDevicePixels="True" Padding="8,0" Height="18"/>
+			</WrapPanel>
+			<TextBlock x:Name="DropCapTextBlock" Margin="0" TextWrapping="Wrap" Text="X" VerticalAlignment="Center" FontSize="40" TextAlignment="Center" HorizontalAlignment="Center" Padding="1,0,0,5" UseLayoutRounding="False" Foreground="White"/>
+			<TextBlock x:Name="ButtonMarkAsRead" Margin="0,12,48,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="24" Cursor="Hand" HorizontalAlignment="Right" Width="24" MouseEnter="ButtonMarkAsRead_MouseEnter" MouseLeave="ButtonMarkAsRead_MouseLeave" ToolTip="Mark as Read" MouseLeftButtonDown="ButtonMarkAsRead_MouseLeftButtonDown" MouseLeftButtonUp="ButtonMarkAsRead_MouseLeftButtonUp" Grid.Column="1">
+				<TextBlock.Background>
+					<ImageBrush ImageSource="res/button_mark_as_read.png" Stretch="Uniform" Opacity="0.5">
+						<ImageBrush.RelativeTransform>
+							<TransformGroup>
+								<ScaleTransform CenterY="0.5" CenterX="0.5" ScaleX="0.8" ScaleY="0.8"/>
+								<SkewTransform CenterY="0.5" CenterX="0.5"/>
+								<RotateTransform CenterY="0.5" CenterX="0.5"/>
+								<TranslateTransform Y="0.01"/>
+							</TransformGroup>
+						</ImageBrush.RelativeTransform>
+					</ImageBrush>
+				</TextBlock.Background>
+			</TextBlock>
+			<TextBlock x:Name="ButtonDelete" Margin="0,12,16,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="24" Cursor="Hand" HorizontalAlignment="Right" Width="24" MouseEnter="ButtonDelete_MouseEnter" MouseLeave="ButtonDelete_MouseLeave" ToolTip="Delete" MouseLeftButtonDown="ButtonDelete_MouseLeftButtonDown" MouseLeftButtonUp="ButtonDelete_MouseLeftButtonUp" Grid.Column="1">
+				<TextBlock.Background>
+					<ImageBrush ImageSource="res/button_delete.png" Stretch="Uniform" Opacity="0.5">
+						<ImageBrush.RelativeTransform>
+							<TransformGroup>
+								<ScaleTransform CenterY="0.5" CenterX="0.5" ScaleX="0.9" ScaleY="0.8"/>
+								<SkewTransform CenterY="0.5" CenterX="0.5"/>
+								<RotateTransform CenterY="0.5" CenterX="0.5"/>
+								<TranslateTransform X="-0.02"/>
+							</TransformGroup>
+						</ImageBrush.RelativeTransform>
+					</ImageBrush>
+				</TextBlock.Background>
+			</TextBlock>
+		</Grid>
+		<Grid x:Name="DeleteBlock" Background="#FFDA4453" Margin="0" Grid.Row="2" Grid.RowSpan="2" >
+			<TextBlock Text="Delete" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center" Padding="0,0,0,2" FontSize="14" FontFamily="Segoe UI Semibold" />
+		</Grid>
+		<Grid x:Name="MarkAsReadBlock" Background="#FFF6BB42" Margin="0,0,0,0" Grid.Row="2" >
+			<TextBlock  Text="Mark as Read" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center" Padding="0,0,0,2" FontSize="14" FontFamily="Segoe UI Semibold" />
+		</Grid>
+		<Grid x:Name="MainBlock" Height="184" Margin="0" VerticalAlignment="Top" Background="#00000000" Grid.Row="1">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="112"/>
+				<ColumnDefinition/>
+			</Grid.ColumnDefinitions>
+			<TextBlock x:Name="SnippetTextBlock" Margin="0,16,16,48" TextWrapping="Wrap" Foreground="#FF242628" FontFamily="Dubai Light" FontSize="14" Grid.Column="1"><Run Text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus faucibus libero et magna ultrices, sit amet pellentesque eros dignissim. In egestas ornare pulvinar. Aenean aliquam pulvinar risus id aliquam. Duis ullamcorper nulla felis, vitae accumsan ante aliquet mollis. Donec maximus nunc vel pretium efficitur. Vestibulum laoreet diam sed nulla maximus, quis viverra quam vehicula. Maecenas vestibulum tempor mauris ac efficitur. Integer vitae odio vel nunc facilisis elementum. In eu ipsum viverra, sagittis urna eget, porttitor turpis. Proin risus felis, scelerisque id tellus sed, fringilla viverra enim. Vivamus luctus leo quis sollicitudin suscipit. In suscipit hendrerit lorem et pulvinar. Fusce in ipsum laoreet, finibus sem vitae, finibus justo."/></TextBlock>
+			<Grid x:Name="InvitationPanel" Margin="0,16,16,48" Grid.Column="1">
+				<TextBlock x:Name="InvitationDateTimeTextBlock" TextWrapping="Wrap" Text="Monday, 17 Aug 2000 at 18:00" VerticalAlignment="Top" Foreground="#FF242628" FontSize="18"/>
+				<TextBlock x:Name="InvitationStartsInTextBlock" TextWrapping="Wrap" Text="in 1 hour 3 minutes" VerticalAlignment="Top" Foreground="#FF242628" Margin="0,24,0,0"/>
+				<TextBlock x:Name="InvitationDurationTextBlock" TextWrapping="Wrap" VerticalAlignment="Top" Foreground="#FF242628" FontSize="15" Margin="20,54,0,0"><Run Text="30 minu"/><Run Text="tes"/></TextBlock>
+				<Image Margin="1,58,0,0" Source="res/img_clock.png" HorizontalAlignment="Left" Width="15" Height="15" VerticalAlignment="Top" Opacity="0.8"/>
+			</Grid>
+			<TextBlock x:Name="IndexTextBlock" Margin="16,0,16,16" TextWrapping="Wrap" Text="1 / 20" Foreground="#FF54595F" TextAlignment="Right" Height="16" VerticalAlignment="Bottom"/>
+			<TextBlock x:Name="BulletsOverflowTextBlock" TextWrapping="Wrap" Text="+" Padding="0" FontWeight="Bold" Margin="280,0,0,14.5" FontSize="19" FontFamily="Segoe UI Black" Foreground="White" HorizontalAlignment="Left" Width="14" Grid.Column="1" Height="25" VerticalAlignment="Bottom"/>
+			<WrapPanel x:Name="BulletsPanel" Margin="0,0,0,16" Height="16" VerticalAlignment="Bottom" HorizontalAlignment="Left" Grid.Column="1" Width="295">
+				<Ellipse Fill="#FF3BAFDA" Height="8" Stroke="Black" Width="8" StrokeThickness="0" Margin="2,4,4,4"/>
+				<Ellipse Fill="White" Height="8" Stroke="Black" Width="8" StrokeThickness="0" Margin="2,4,4,4"/>
+				<Ellipse Fill="White" Height="8" Stroke="Black" Width="8" StrokeThickness="0" Margin="2,4,4,4"/>
+				<Ellipse Fill="White" Height="8" Stroke="Black" Width="8" StrokeThickness="0" Margin="2,4,4,4"/>
+				<Ellipse Fill="White" Height="8" Stroke="Black" Width="8" StrokeThickness="0" Margin="2,4,4,4"/>
+				<Ellipse Fill="White" Height="8" Stroke="Black" Width="8" StrokeThickness="0" Margin="2,4,4,4"/>
+				<Ellipse Fill="White" Height="8" Stroke="Black" Width="8" StrokeThickness="0" Margin="2,4,4,4"/>
+				<Ellipse Fill="White" Height="8" Stroke="Black" Width="8" StrokeThickness="0" Margin="2,4,4,4"/>
+				<Ellipse Fill="White" Height="8" Stroke="Black" Width="8" StrokeThickness="0" Margin="2,4,4,4"/>
+				<Ellipse Fill="White" Height="8" Stroke="Black" Width="8" StrokeThickness="0" Margin="2,4,4,4"/>
+				<Ellipse Fill="White" Height="8" Stroke="Black" Width="8" StrokeThickness="0" Margin="2,4,4,4"/>
+				<Ellipse Fill="White" Height="8" Stroke="Black" Width="8" StrokeThickness="0" Margin="2,4,4,4"/>
+				<Ellipse Fill="White" Height="8" Stroke="Black" Width="8" StrokeThickness="0" Margin="2,4,4,4"/>
+				<Ellipse Fill="White" Height="8" Stroke="Black" Width="8" StrokeThickness="0" Margin="2,4,4,4"/>
+				<Ellipse Fill="White" Height="8" Stroke="Black" Width="8" StrokeThickness="0" Margin="2,4,4,4"/>
+				<Ellipse Fill="White" Height="8" Stroke="Black" Width="8" StrokeThickness="0" Margin="2,4,4,4"/>
+				<Ellipse Fill="White" Height="8" Stroke="Black" Width="8" StrokeThickness="0" Margin="2,4,4,4"/>
+				<Ellipse Fill="White" Height="8" Stroke="Black" Width="8" StrokeThickness="0" Margin="2,4,4,4"/>
+				<Ellipse Fill="White" Height="8" Stroke="Black" Width="8" StrokeThickness="0" Margin="2,4,4,4"/>
+				<Ellipse Fill="White" Height="8" Stroke="Black" Width="8" StrokeThickness="0" Margin="2,4,4,4"/>
+			</WrapPanel>
+		</Grid>
 
 
 	</Grid>

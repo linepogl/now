@@ -12,6 +12,7 @@ namespace Now {
 
 		public readonly Gmail Gmail = new Gmail();
 		private static readonly TimeSpan SyncInterval = TimeSpan.FromSeconds(30);
+		private static readonly TimeSpan FailOverSyncInterval = TimeSpan.FromSeconds(300);
 
 		#region Components
 		public System.Windows.Forms.NotifyIcon NotifyIcon;
@@ -19,11 +20,14 @@ namespace Now {
 		public System.Windows.Forms.ToolStripItem ContextMenuSync;
 		public System.Windows.Forms.ToolStripItem ContextMenuConn;
 		public System.Windows.Forms.ToolStripItem ContextMenuExit;
+		public System.Windows.Forms.Timer Timer;
 		public KeyboardHook KeyboardHook;
 		public NotificationWindow NotificationWindow;
 		public System.Drawing.Icon icoNotConnected;
 		public System.Drawing.Icon icoConnecting;
 		public System.Drawing.Icon icoSynchronising;
+		public System.Drawing.Icon icoSynchronisingFirstTime;
+		public System.Drawing.Icon icoSynchronisingUnread;
 		public System.Drawing.Icon icoNoUnreadMessages;
 		public System.Drawing.Icon icoUnreadMessages;
 		private void InitialiseComponents() {
@@ -32,11 +36,13 @@ namespace Now {
 			var res = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceNames();
 
 			var assembly = System.Reflection.Assembly.GetExecutingAssembly();
-			icoNotConnected = System.Drawing.Icon.FromHandle(new System.Drawing.Bitmap(assembly.GetManifestResourceStream("Now.Resources.status_not_connected.png")).GetHicon());
-			icoConnecting = System.Drawing.Icon.FromHandle(new System.Drawing.Bitmap(assembly.GetManifestResourceStream("Now.Resources.status_connecting.png")).GetHicon());
-			icoSynchronising = System.Drawing.Icon.FromHandle(new System.Drawing.Bitmap(assembly.GetManifestResourceStream("Now.Resources.status_synchronising.png")).GetHicon());
-			icoNoUnreadMessages = System.Drawing.Icon.FromHandle(new System.Drawing.Bitmap(assembly.GetManifestResourceStream("Now.Resources.status_no_unread_messages.png")).GetHicon());
-			icoUnreadMessages = System.Drawing.Icon.FromHandle(new System.Drawing.Bitmap(assembly.GetManifestResourceStream("Now.Resources.status_unread_messages.png")).GetHicon());
+			icoNotConnected = System.Drawing.Icon.FromHandle(new System.Drawing.Bitmap(assembly.GetManifestResourceStream("Now.res.status_not_connected.png")).GetHicon());
+			icoConnecting = System.Drawing.Icon.FromHandle(new System.Drawing.Bitmap(assembly.GetManifestResourceStream("Now.res.status_connecting.png")).GetHicon());
+			icoSynchronising = System.Drawing.Icon.FromHandle(new System.Drawing.Bitmap(assembly.GetManifestResourceStream("Now.res.status_synchronising.png")).GetHicon());
+			icoSynchronisingFirstTime = System.Drawing.Icon.FromHandle(new System.Drawing.Bitmap(assembly.GetManifestResourceStream("Now.res.status_synchronising_first_time.png")).GetHicon());
+			icoSynchronisingUnread = System.Drawing.Icon.FromHandle(new System.Drawing.Bitmap(assembly.GetManifestResourceStream("Now.res.status_synchronising_unread.png")).GetHicon());
+			icoNoUnreadMessages = System.Drawing.Icon.FromHandle(new System.Drawing.Bitmap(assembly.GetManifestResourceStream("Now.res.status_no_unread_messages.png")).GetHicon());
+			icoUnreadMessages = System.Drawing.Icon.FromHandle(new System.Drawing.Bitmap(assembly.GetManifestResourceStream("Now.res.status_unread_messages.png")).GetHicon());
 			
 			NotifyIcon = new System.Windows.Forms.NotifyIcon();
 			NotifyIcon.Icon = icoNotConnected;
@@ -72,10 +78,12 @@ namespace Now {
 			try { KeyboardHook.RegisterHotKey(ModifierKeys.Control | ModifierKeys.Alt, System.Windows.Forms.Keys.OemCloseBrackets); } catch (Exception) { }
 			try { KeyboardHook.RegisterHotKey(ModifierKeys.Control | ModifierKeys.Alt, System.Windows.Forms.Keys.OemSemicolon); } catch (Exception) { }
 			try { KeyboardHook.RegisterHotKey(ModifierKeys.Control | ModifierKeys.Alt, System.Windows.Forms.Keys.OemPeriod); } catch (Exception) { }
+
+			Timer = new System.Windows.Forms.Timer();
+			Timer.Interval = (int)FailOverSyncInterval.TotalMilliseconds;
+			Timer.Tick += Timer_Tick;
 		}
 		#endregion
-
-
 
 		private async void Application_Startup(object sender, StartupEventArgs e) {
 			this.InitialiseComponents();
@@ -104,8 +112,12 @@ namespace Now {
 					NotifyIcon.Icon = icoConnecting;
 					NotifyIcon.Text = "Connecting...";
 					break;
-				case Status.Synchronising: 
-					NotifyIcon.Icon = icoSynchronising;
+				case Status.SynchronisingFirstTime: 
+					NotifyIcon.Icon = icoSynchronisingFirstTime;
+					NotifyIcon.Text = "Synchronising...";
+					break;
+				case Status.Synchronising:
+					NotifyIcon.Icon = Gmail.CountUnmarkedMessages() == 0 ? icoSynchronising : icoSynchronisingUnread;
 					NotifyIcon.Text = "Synchronising...";
 					break;
 				case Status.StandBy:
@@ -144,6 +156,10 @@ namespace Now {
 
 		private async void ContextMenuSync_Clicked(object sender, EventArgs e) {
 			await Gmail.Sync(SyncInterval);
+		}
+
+		private async void Timer_Tick(object sender, EventArgs e) {
+			if (Gmail.IsConnected) await Gmail.Sync(SyncInterval);
 		}
 
 		private void Gmail_Synchronised() {

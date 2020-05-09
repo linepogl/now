@@ -38,7 +38,8 @@ namespace Now {
 			get => _status;
 			private set { if (_status != value) { _status = value; this.StatusChanged?.Invoke(); } }
 		}
-
+		public bool IsConnected => this.Service != null;
+		private bool HasSynchronisedEver = false;
 
 		//
 		//
@@ -52,7 +53,7 @@ namespace Now {
 			connection_in_progress = new CancellationTokenSource();
 			try {
 				var credentials = await GoogleWebAuthorizationBroker.AuthorizeAsync(
-					GoogleClientSecrets.Load(System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Now.Resources.google_oauth_credentials.json")).Secrets,
+					GoogleClientSecrets.Load(System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Now.res.google_oauth_credentials.json")).Secrets,
 					new String[] { GmailService.ScopeConstants.MailGoogleCom }, "user", connection_in_progress.Token
 					);
 				this.Service = new GmailService(new BaseClientService.Initializer { ApplicationName = "Now", HttpClientInitializer = credentials });
@@ -77,11 +78,12 @@ namespace Now {
 				var token = sync_in_progress.Token;
 				var i = 0;
 				while (!token.IsCancellationRequested) {
-					this.Status = Status.Synchronising; this.Synchronising?.Invoke();
+					this.Status = this.HasSynchronisedEver ? Status.Synchronising : Status.SynchronisingFirstTime; this.Synchronising?.Invoke();
 					await this.LocalLabels.Sync(this);
 					var messages = this.LocalMessages.Clone();
 					var new_messages = await messages.Sync(this);
 					this.LocalMessages = messages;
+					this.HasSynchronisedEver = true;
 					this.Status = Status.StandBy; this.Synchronised?.Invoke();
 					if (i++ == 0)
 						this.FirstSyncCompleted?.Invoke();
@@ -127,7 +129,7 @@ namespace Now {
 
 		public void Open(LocalMessage message) {
 			System.Diagnostics.Process.Start("chrome",
-				"--app=https://mail.google.com/mail/u/0/#inbox/" + message.id + " --app-id=pjkljhegncpnkpknbcohdijeoejaedia --start-maximised"
+				" --app-id=pjkljhegncpnkpknbcohdijeoejaedia --start-maximised --app=https://mail.google.com/mail/u/0/#inbox/" + message.id
 				);
 		}
 	}

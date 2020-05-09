@@ -56,12 +56,32 @@
     <Reference Include="Google.Apis.PlatformServices, Version=1.45.0.0, Culture=neutral, PublicKeyToken=4b01fa6e34db77ab, processorArchitecture=MSIL">
       <HintPath>packages\Google.Apis.1.45.0\lib\net45\Google.Apis.PlatformServices.dll</HintPath>
     </Reference>
+    <Reference Include="Ical.Net, Version=4.1.8.0, Culture=neutral, PublicKeyToken=65c0446cd019ea53, processorArchitecture=MSIL">
+      <HintPath>packages\Ical.Net.4.1.11\lib\net46\Ical.Net.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="NodaTime, Version=2.0.2.0, Culture=neutral, PublicKeyToken=4226afe0d9b296d1, processorArchitecture=MSIL">
+      <HintPath>packages\NodaTime.2.0.2\lib\net45\NodaTime.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Reflection, Version=4.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>packages\System.Reflection.4.1.0\lib\net462\System.Reflection.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Reflection.TypeExtensions, Version=4.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>packages\System.Reflection.TypeExtensions.4.1.0\lib\net462\System.Reflection.TypeExtensions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Runtime.Serialization.Primitives, Version=4.1.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>packages\System.Runtime.Serialization.Primitives.4.3.0\lib\net46\System.Runtime.Serialization.Primitives.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -105,24 +125,34 @@
       <SubType>Code</SubType>
     </Compile>
     <None Include="packages.config" />
-    <EmbeddedResource Include="Resources\google_oauth_credentials.json" />
+    <EmbeddedResource Include="res\google_oauth_credentials.json" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\button_delete.png" />
-    <Resource Include="Resources\button_mark_as_read.png" />
-    <EmbeddedResource Include="Resources\status_connecting.png" />
-    <EmbeddedResource Include="Resources\status_not_connected.png" />
-    <EmbeddedResource Include="Resources\status_synchronising.png" />
+    <Resource Include="res\button_delete.png" />
+    <Resource Include="res\button_mark_as_read.png" />
+    <EmbeddedResource Include="res\status_connecting.png" />
+    <EmbeddedResource Include="res\status_not_connected.png" />
+    <EmbeddedResource Include="res\status_synchronising.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\status_no_unread_messages.png" />
-    <EmbeddedResource Include="Resources\status_unread_messages.png" />
+    <EmbeddedResource Include="res\status_no_unread_messages.png" />
+    <EmbeddedResource Include="res\status_unread_messages.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Icon.ico" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="res\img_calendar.png" />
+    <Resource Include="res\img_clock.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="res\status_synchronising_first_time.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="res\status_synchronising_unread.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace Now {
@@ -18,6 +19,9 @@ namespace Now {
 		public string CC = "";
 		public bool Marked = false;
 		public readonly List<LocalLabel> Labels = new List<LocalLabel>();
+		public DateTime? InvitationDateFrom = null;
+		public DateTime? InvitationDateTill = null;
+		public bool IsInvitation => this.InvitationDateFrom != null;
 
 		public LocalMessage(string id) { this.id = id; }
 		public async Task Load(Gmail gmail) {
@@ -25,6 +29,7 @@ namespace Now {
 			this.ReceivedAt = Conversions.EpochMillisecondsToDateTime(remote_message.InternalDate.GetValueOrDefault(0));
 			this.Labels.Clear();
 			this.Labels.AddRange(remote_message.LabelIds.Where(x => x.StartsWith("Label_")).Select(x => gmail.LocalLabels[x]).Where(x => x != null));
+			this.Labels.Sort((x, y) => String.Compare(x.Name, y.Name));
 			this.Snippet = WebUtility.HtmlDecode(remote_message.Snippet);
 			foreach (var header in remote_message.Payload.Headers) {
 				switch (header.Name) {
@@ -42,8 +47,19 @@ namespace Now {
 						break;
 				}
 			}
-			if (remote_message.Payload.Parts != null && remote_message.Payload.MimeType == "multipart/mixed") {
-				this.CountAttachments = remote_message.Payload.Parts.Where(part => !string.IsNullOrEmpty(part.Filename)).Count();
+			if (remote_message.Payload.Parts != null) {
+				if (remote_message.Payload.MimeType == "multipart/mixed") {
+					this.CountAttachments = remote_message.Payload.Parts.Where(part => !string.IsNullOrEmpty(part.Filename)).Count();
+				}
+				var invitation_attachment_id = remote_message.Payload.Parts.Where(x => x?.Filename == "invite.ics").FirstOrDefault()?.Body?.AttachmentId;
+				if (invitation_attachment_id != null) {
+					var invitation = await gmail.Api.Messages.Attachments.Get("me", this.id, invitation_attachment_id).ExecuteAsync();
+					var ics = System.Text.Encoding.UTF8.GetString(Conversions.Base64UrlDecode(invitation.Data));
+					var vcalendar = Ical.Net.Calendar.Load(ics);
+					var vevent = vcalendar.Events.FirstOrDefault();
+					this.InvitationDateFrom = vevent.DtStart.AsSystemLocal;
+					this.InvitationDateTill = vevent.DtEnd.AsSystemLocal;
+				}
 			}
 		}
 	}
