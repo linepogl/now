@@ -14,6 +14,8 @@
     <WarningLevel>4</WarningLevel>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -47,6 +49,9 @@
     <Reference Include="Google.Apis.Auth.PlatformServices, Version=1.45.0.0, Culture=neutral, PublicKeyToken=4b01fa6e34db77ab, processorArchitecture=MSIL">
       <HintPath>packages\Google.Apis.Auth.1.45.0\lib\net45\Google.Apis.Auth.PlatformServices.dll</HintPath>
     </Reference>
+    <Reference Include="Google.Apis.Calendar.v3, Version=1.45.0.1928, Culture=neutral, PublicKeyToken=4b01fa6e34db77ab, processorArchitecture=MSIL">
+      <HintPath>packages\Google.Apis.Calendar.v3.1.45.0.1928\lib\net45\Google.Apis.Calendar.v3.dll</HintPath>
+    </Reference>
     <Reference Include="Google.Apis.Core, Version=1.45.0.0, Culture=neutral, PublicKeyToken=4b01fa6e34db77ab, processorArchitecture=MSIL">
       <HintPath>packages\Google.Apis.Core.1.45.0\lib\net45\Google.Apis.Core.dll</HintPath>
     </Reference>
@@ -58,6 +63,9 @@
     </Reference>
     <Reference Include="Ical.Net, Version=4.1.8.0, Culture=neutral, PublicKeyToken=65c0446cd019ea53, processorArchitecture=MSIL">
       <HintPath>packages\Ical.Net.4.1.11\lib\net46\Ical.Net.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.mshtml, Version=7.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -97,39 +105,43 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <ApplicationDefinition Include="App.xaml">
+    <ApplicationDefinition Include="src\ui\App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="NotificationWindow.xaml">
+    <Compile Include="src\ui\WebBrowser.xaml.cs">
+      <DependentUpon>WebBrowser.xaml</DependentUpon>
+    </Compile>
+    <Page Include="src\ui\NotificationWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Compile Include="App.xaml.cs">
+    <Compile Include="src\ui\App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Convertions.cs" />
-    <Compile Include="Keyboard.cs" />
-    <Compile Include="Status.cs" />
-    <Compile Include="LocalMessage.cs" />
-    <Compile Include="LocalLabel.cs" />
-    <Compile Include="Gmail.cs" />
-    <Compile Include="NotificationWindow.xaml.cs">
+    <Compile Include="src\Tools.cs" />
+    <Compile Include="src\Keyboard.cs" />
+    <Compile Include="src\LocalMessage.cs" />
+    <Compile Include="src\LocalLabel.cs" />
+    <Compile Include="src\Gmail.cs" />
+    <Compile Include="src\ui\NotificationWindow.xaml.cs">
       <DependentUpon>NotificationWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="src\ui\WebBrowser.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AssemblyInfo.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <None Include=".gitattributes" />
+    <None Include=".gitignore" />
     <None Include="packages.config" />
     <EmbeddedResource Include="res\google_oauth_credentials.json" />
+    <None Include="res\statuses.psd" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="res\button_delete.png" />
-    <Resource Include="res\button_mark_as_read.png" />
     <EmbeddedResource Include="res\status_connecting.png" />
     <EmbeddedResource Include="res\status_not_connected.png" />
     <EmbeddedResource Include="res\status_synchronising.png" />
@@ -153,6 +165,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="res\status_synchronising_unread.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="res\img_attachment.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

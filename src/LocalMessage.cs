@@ -1,10 +1,12 @@
-﻿using System;
+﻿using Google.Apis.Gmail.v1.Data;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using System.Windows.Media.Animation;
 
 namespace Now {
 	public class LocalMessage {
@@ -21,16 +23,24 @@ namespace Now {
 		public readonly List<LocalLabel> Labels = new List<LocalLabel>();
 		public DateTime? InvitationDateFrom = null;
 		public DateTime? InvitationDateTill = null;
+		public TimeSpan? InvitationDuration {
+			get {
+				if (InvitationDateFrom == null) return null;
+				if (InvitationDateTill == null) return null;
+				return InvitationDateTill.Value.Subtract(InvitationDateFrom.Value);
+			}
+		}
 		public bool IsInvitation => this.InvitationDateFrom != null;
 
 		public LocalMessage(string id) { this.id = id; }
 		public async Task Load(Gmail gmail) {
 			var remote_message = await gmail.Api.Messages.Get("me", this.id).ExecuteAsync();
-			this.ReceivedAt = Conversions.EpochMillisecondsToDateTime(remote_message.InternalDate.GetValueOrDefault(0));
+			this.ReceivedAt = Tools.EpochMillisecondsToDateTime(remote_message.InternalDate.GetValueOrDefault(0));
 			this.Labels.Clear();
 			this.Labels.AddRange(remote_message.LabelIds.Where(x => x.StartsWith("Label_")).Select(x => gmail.LocalLabels[x]).Where(x => x != null));
 			this.Labels.Sort((x, y) => String.Compare(x.Name, y.Name));
 			this.Snippet = WebUtility.HtmlDecode(remote_message.Snippet);
+			this.Body = "<html><body>" + this.Snippet + "</body></html>";
 			foreach (var header in remote_message.Payload.Headers) {
 				switch (header.Name) {
 					case "From":
@@ -47,14 +57,31 @@ namespace Now {
 						break;
 				}
 			}
-			if (remote_message.Payload.Parts != null) {
-				if (remote_message.Payload.MimeType == "multipart/mixed") {
-					this.CountAttachments = remote_message.Payload.Parts.Where(part => !string.IsNullOrEmpty(part.Filename)).Count();
+
+			var parts = remote_message.Payload.Parts;
+
+			var body_parts = new List<MessagePart>();
+			body_parts.Add(remote_message.Payload);
+			if (parts != null) body_parts.AddRange(parts);
+			if (parts != null) body_parts.AddRange(parts.Where(x => x.MimeType == "multipart/alternative").SelectMany(x => x.Parts));
+			var encoded_html = body_parts.FirstOrDefault(x => x?.MimeType == "text/html")?.Body?.Data;
+			if (encoded_html != null) {
+				this.Body = Tools.Base64UrlDecodeUtf8(encoded_html);
+			}
+			else {
+				var encoded_text = body_parts.FirstOrDefault(x => x?.MimeType == "text/plain")?.Body?.Data;
+				if (encoded_text != null) {
+					this.Body = Tools.Base64UrlDecodeUtf8(encoded_text);
 				}
-				var invitation_attachment_id = remote_message.Payload.Parts.Where(x => x?.Filename == "invite.ics").FirstOrDefault()?.Body?.AttachmentId;
+			}
+
+			if (parts != null) {
+				this.CountAttachments = parts.Count(part => part.Filename != null && part.Filename != "" && part.Filename != "invite.ics");
+
+				var invitation_attachment_id = parts.FirstOrDefault(x => x?.Filename == "invite.ics")?.Body?.AttachmentId;
 				if (invitation_attachment_id != null) {
 					var invitation = await gmail.Api.Messages.Attachments.Get("me", this.id, invitation_attachment_id).ExecuteAsync();
-					var ics = System.Text.Encoding.UTF8.GetString(Conversions.Base64UrlDecode(invitation.Data));
+					var ics = Tools.Base64UrlDecodeUtf8(invitation.Data);
 					var vcalendar = Ical.Net.Calendar.Load(ics);
 					var vevent = vcalendar.Events.FirstOrDefault();
 					this.InvitationDateFrom = vevent.DtStart.AsSystemLocal;

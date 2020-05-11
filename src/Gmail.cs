@@ -1,20 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Globalization;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Media;
 using Google.Apis.Auth.OAuth2;
-using Google.Apis.Auth.OAuth2.Requests;
-using Google.Apis.Auth.OAuth2.Responses;
 using Google.Apis.Gmail.v1;
 using Google.Apis.Services;
 
 namespace Now {
+	public enum Status {
+		NotConnected,
+		Connecting,
+		SynchronisingFirstTime,
+		StandBy,
+		Synchronising
+	}
+
 	public class Gmail {
 		public LocalLabelCollection LocalLabels;
 		public LocalMessageCollection LocalMessages;
@@ -56,7 +57,8 @@ namespace Now {
 					GoogleClientSecrets.Load(System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Now.res.google_oauth_credentials.json")).Secrets,
 					new String[] { GmailService.ScopeConstants.MailGoogleCom }, "user", connection_in_progress.Token
 					);
-				this.Service = new GmailService(new BaseClientService.Initializer { ApplicationName = "Now", HttpClientInitializer = credentials });
+				var initialiser = new BaseClientService.Initializer { ApplicationName = "Now", HttpClientInitializer = credentials };
+				this.Service = new GmailService(initialiser);
 				this.Status = Status.StandBy; this.Connected?.Invoke();
 			}
 			catch (Exception) {

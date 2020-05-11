@@ -25,8 +25,8 @@ namespace Now {
 		public async Task Load(Gmail gmail) {
 			var remote_label = await gmail.Api.Labels.Get("me", this.id).ExecuteAsync();
 			if (remote_label.Color != null) {
-				this.BgColor = Conversions.StringToColor(remote_label.Color.BackgroundColor);
-				this.FgColor = Conversions.StringToColor(remote_label.Color.TextColor);
+				this.BgColor = Tools.StringToColor(remote_label.Color.BackgroundColor);
+				this.FgColor = Tools.StringToColor(remote_label.Color.TextColor);
 			}
 			this.Name = remote_label.Name;
 		}
