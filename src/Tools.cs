@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
@@ -142,5 +145,20 @@ namespace Now {
 			if (then != null) anim.Completed += (s, e) => { then.Invoke(); };
 			ui.BeginAnimation(property, anim, HandoffBehavior.SnapshotAndReplace);
 		}
+
+		public static IEnumerable<T> DescendantsOrSelf<T>(this T obj, Func<T, IEnumerable<T>> get_children) {
+			yield return obj;
+			foreach (var x in obj.Descendants(get_children))
+				yield return x;
+		}
+
+		public static IEnumerable<T> Descendants<T>(this T obj, Func<T, IEnumerable<T>> get_children) {
+			var children = get_children(obj);
+			if (children == null) 
+				yield break;
+			foreach (T x in children.SelectMany(x => x.DescendantsOrSelf(get_children)))
+				yield return x;
+		}
+
 	}
 }

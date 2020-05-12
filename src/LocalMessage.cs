@@ -58,35 +58,30 @@ namespace Now {
 				}
 			}
 
-			var parts = remote_message.Payload.Parts;
+			var parts = remote_message.Payload.DescendantsOrSelf(x => x.Parts);
+			var body_parts = parts.Where(x => x.Filename == null || x.Filename == "");
 
-			var body_parts = new List<MessagePart>();
-			body_parts.Add(remote_message.Payload);
-			if (parts != null) body_parts.AddRange(parts);
-			if (parts != null) body_parts.AddRange(parts.Where(x => x.MimeType == "multipart/alternative").SelectMany(x => x.Parts));
-			var encoded_html = body_parts.FirstOrDefault(x => x?.MimeType == "text/html")?.Body?.Data;
+			var encoded_html = body_parts.FirstOrDefault(x => x.MimeType == "text/html")?.Body?.Data;
 			if (encoded_html != null) {
 				this.Body = Tools.Base64UrlDecodeUtf8(encoded_html);
 			}
 			else {
-				var encoded_text = body_parts.FirstOrDefault(x => x?.MimeType == "text/plain")?.Body?.Data;
+				var encoded_text = body_parts.FirstOrDefault(x => x.MimeType == "text/plain")?.Body?.Data;
 				if (encoded_text != null) {
 					this.Body = Tools.Base64UrlDecodeUtf8(encoded_text);
 				}
 			}
 
-			if (parts != null) {
-				this.CountAttachments = parts.Count(part => part.Filename != null && part.Filename != "" && part.Filename != "invite.ics");
+			this.CountAttachments = parts.Count(part => part.Filename != null && part.Filename != "" && part.Filename != "invite.ics");
 
-				var invitation_attachment_id = parts.FirstOrDefault(x => x?.Filename == "invite.ics")?.Body?.AttachmentId;
-				if (invitation_attachment_id != null) {
-					var invitation = await gmail.Api.Messages.Attachments.Get("me", this.id, invitation_attachment_id).ExecuteAsync();
-					var ics = Tools.Base64UrlDecodeUtf8(invitation.Data);
-					var vcalendar = Ical.Net.Calendar.Load(ics);
-					var vevent = vcalendar.Events.FirstOrDefault();
-					this.InvitationDateFrom = vevent.DtStart.AsSystemLocal;
-					this.InvitationDateTill = vevent.DtEnd.AsSystemLocal;
-				}
+			var invitation_attachment_id = parts.FirstOrDefault(x => x?.Filename == "invite.ics")?.Body?.AttachmentId;
+			if (invitation_attachment_id != null) {
+				var invitation = await gmail.Api.Messages.Attachments.Get("me", this.id, invitation_attachment_id).ExecuteAsync();
+				var ics = Tools.Base64UrlDecodeUtf8(invitation.Data);
+				var vcalendar = Ical.Net.Calendar.Load(ics);
+				var vevent = vcalendar.Events.FirstOrDefault();
+				this.InvitationDateFrom = vevent.DtStart.AsSystemLocal;
+				this.InvitationDateTill = vevent.DtEnd.AsSystemLocal;
 			}
 		}
 	}
