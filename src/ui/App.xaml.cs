@@ -88,7 +88,7 @@ namespace Now {
 		}
 		#endregion
 
-					private async void Application_Startup(object sender, StartupEventArgs e) {
+		private async void Application_Startup(object sender, StartupEventArgs e) {
 			this.InitialiseComponents();
 			await Gmail.Connect();
 		}

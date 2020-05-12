@@ -65,8 +65,8 @@ namespace Now {
 		};
 
 		public void Update() {
-			this.PositionWindow();
 			if (Message == null) { this.AnimateHide(); return; }
+			this.PositionWindow();
 
 			// Update bullets
 			var total = this.Messages.Count;
