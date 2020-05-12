@@ -38,7 +38,7 @@ namespace Now {
 							 : value;
 				var old_message = _message;
 				_message = _index < 0 ? null : this.Messages[_index];
-				if (old_message != _message) ReactionLevel = 0;
+				if (old_message != _message) { ReactionLevel = 0; Full = false; }
 				this.Update();
 			}
 		}
@@ -192,6 +192,7 @@ namespace Now {
 			this.ActionsBlock.Height = this.TargetExtraHeight;
 			var webbrowser_top_margin = this.HeaderBlock.ActualHeight + 16;
 			if (Message.IsInvitation) webbrowser_top_margin += this.InvitationPanel.ActualHeight + 16;
+			if (this.Full) this.WebBrowser.Show(); else this.WebBrowser.Hide();
 			this.WebBrowser.Top = this.Top + webbrowser_top_margin;
 			this.WebBrowser.Left = this.Left + 112;
 			this.WebBrowser.Width = this.Width - 112 - 8;
