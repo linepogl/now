@@ -40,7 +40,7 @@ namespace Now {
 			private set { if (_status != value) { _status = value; this.StatusChanged?.Invoke(); } }
 		}
 		public bool IsConnected => this.Service != null;
-		private bool HasSynchronisedEver = false;
+		public bool HasSynchronisedEver = false;
 
 		//
 		//
@@ -78,16 +78,16 @@ namespace Now {
 			sync_in_progress = new CancellationTokenSource();
 			try {
 				var token = sync_in_progress.Token;
-				var i = 0;
 				while (!token.IsCancellationRequested) {
 					this.Status = this.HasSynchronisedEver ? Status.Synchronising : Status.SynchronisingFirstTime; this.Synchronising?.Invoke();
 					await this.LocalLabels.Sync(this);
 					var messages = this.LocalMessages.Clone();
 					var new_messages = await messages.Sync(this);
 					this.LocalMessages = messages;
+					var is_first_sync = !this.HasSynchronisedEver;
 					this.HasSynchronisedEver = true;
 					this.Status = Status.StandBy; this.Synchronised?.Invoke();
-					if (i++ == 0)
+					if (is_first_sync)
 						this.FirstSyncCompleted?.Invoke();
 					else if (new_messages.Count > 0)
 						this.NewMessagesReceived?.Invoke(new_messages);

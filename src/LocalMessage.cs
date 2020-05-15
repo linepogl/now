@@ -17,8 +17,8 @@ namespace Now {
 		public int CountAttachments = 0;
 		public DateTime ReceivedAt = DateTime.MinValue;
 		public string From = "";
-		public string To = "";
-		public string CC = "";
+		public List<string> To = new List<string>();
+		public List<string> CC = new List<string>();
 		public bool Marked = false;
 		public readonly List<LocalLabel> Labels = new List<LocalLabel>();
 		public DateTime? InvitationDateFrom = null;
@@ -47,13 +47,13 @@ namespace Now {
 						this.From = header.Value;
 						break;
 					case "To":
-						this.To = header.Value;
+						this.To = header.Value.Split(';', ',').Select(x => x.Trim()).ToList();
 						break;
 					case "Subject":
 						this.Subject = string.IsNullOrEmpty(header.Value) ? "" : header.Value;
 						break;
 					case "CC":
-						this.CC = header.Value;
+						this.CC = header.Value.Split(';', ',').Select(x => x.Trim()).ToList();
 						break;
 				}
 			}

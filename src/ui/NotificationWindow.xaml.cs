@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
@@ -13,9 +14,12 @@ namespace Now {
 	public partial class NotificationWindow : Window {
 		private readonly Gmail Gmail;
 		private readonly WebBrowser WebBrowser = new WebBrowser();
+		public event MouseWheelEventHandler MouseWheelHorizontal;
+		public event EventHandler Updated;
 
 		public NotificationWindow(Gmail gmail) {
 			InitializeComponent();
+			MouseWheelHorizontal += Window_MouseWheelHorizontal;
 			this.Gmail = gmail;
 		}
 
@@ -40,6 +44,7 @@ namespace Now {
 				_message = _index < 0 ? null : this.Messages[_index];
 				if (old_message != _message) { ReactionLevel = 0; Full = false; }
 				this.Update();
+				this.Updated?.Invoke(this, new EventArgs());
 			}
 		}
 
@@ -89,7 +94,11 @@ namespace Now {
 			SnippetTextBlock.Text = Message.Snippet;
 			SnippetTextBlock.Visibility = Message.IsInvitation ? Visibility.Hidden : Visibility.Visible;
 			InvitationPanel.Visibility = !Message.IsInvitation ? Visibility.Hidden : Visibility.Visible;
-			
+
+			RecipientsTextBlock.Text = (Message.To.Count() + Message.CC.Count).ToString();
+			RecipientsPanel.ToolTip = "To\n" + String.Join("\n", Message.To);
+			if (Message.CC.Count > 0) RecipientsPanel.ToolTip += "\n\nCC\n" + String.Join("\n", Message.CC);
+
 			AttachmentsPanel.Visibility = Message.CountAttachments == 0 ? Visibility.Hidden : Visibility.Visible;
 			AttachmentsTextBlock.Text = Message.CountAttachments.ToString();
 
@@ -128,11 +137,43 @@ namespace Now {
 			}
 		}
 
+		private int horizontal_scroll = 0;
+		private int vertical_scroll = 0;
+		private Action debounced_vertical_reset = null;
+		private Action debounced_horizontal_reset = null;
+
 		private void Window_MouseWheel(object sender, MouseWheelEventArgs e) {
-			if (e.Delta < 0)
+			if (this.debounced_vertical_reset == null) this.debounced_vertical_reset = Tools.Debounce(() => { this.vertical_scroll = 0; }, 300);
+			if (Math.Sign(this.vertical_scroll) * Math.Sign(e.Delta) < 0) { this.vertical_scroll = 0; }
+
+			this.vertical_scroll += e.Delta;
+			if (this.vertical_scroll > 200) {
+				//this.ReactionUp();
+				this.vertical_scroll = 0;
+			}
+			else if (this.vertical_scroll < -200) {
 				this.ReactionDown();
-			else
-				this.ReactionUp();
+				this.vertical_scroll = 0;
+			}
+
+			this.debounced_vertical_reset.Invoke();
+		}
+
+		private void Window_MouseWheelHorizontal(object sender, MouseWheelEventArgs e) {
+			if (this.debounced_horizontal_reset == null) this.debounced_horizontal_reset = Tools.Debounce(() => { this.horizontal_scroll = 0; }, 300);
+			if (Math.Sign(this.horizontal_scroll) != Math.Sign(e.Delta)) this.horizontal_scroll = 0;
+
+			this.horizontal_scroll += e.Delta;
+			if (this.horizontal_scroll > 200) {
+				this.Index++;
+				this.horizontal_scroll = 0;
+			}
+			else if (this.horizontal_scroll < -200) {
+				this.Index--;
+				this.horizontal_scroll = 0;
+			}
+
+			this.debounced_horizontal_reset.Invoke();
 		}
 
 		public void AnimateShow() {
@@ -143,6 +184,7 @@ namespace Now {
 			this.Show();
 			this.Animate(TopProperty, SystemParameters.WorkArea.Height - this.Height - 8, 0.5);
 			this.Animate(OpacityProperty, 1.0, 0.5);
+			this.Updated?.Invoke(this, new EventArgs());
 		}
 		private bool is_hiding = false;
 		public void AnimateHide() {
@@ -153,6 +195,7 @@ namespace Now {
 			this.is_hiding = true;
 			this.Animate(TopProperty, SystemParameters.WorkArea.Height, 0.5);
 			this.Animate(OpacityProperty, 0.0, 0.5, () => { this.Hide(); this.is_hiding = false; });
+			this.Updated?.Invoke(this, new EventArgs());
 		}
 
 		public async Task MarkAsRead() {
@@ -178,7 +221,7 @@ namespace Now {
 		private const double StandardWidth = 500;
 		private const double ExpandedWidth = 1000;
 		private const double ActionsHeight = 40;
-		private double TargetExtraHeight => this.ReactionLevel == Reaction.None ? 0 : ActionsHeight;
+		private double TargetExtraHeight => this.ReactionLevel == Reaction.None ? 0 : this.ReactionLevel == Reaction.MarkAsRead ? ActionsHeight : 2 * ActionsHeight;
 		private double TargetWidth => this.Full ? ExpandedWidth : StandardWidth;
 		private double TargetHeight => (this.Full ? ExpandedHeight : StandardHeight) + TargetExtraHeight;
 		public bool Full = false;
@@ -257,6 +300,32 @@ namespace Now {
 				WebBrowser.Show();
 			else 
 				WebBrowser.Hide();
+		}
+
+		private void Window_SourceInitialized(object sender, EventArgs e) {
+			var source = PresentationSource.FromVisual(this) as HwndSource;
+			source?.AddHook(Hook);
+		}
+
+		const int WM_MOUSEHWHEEL = 0x020E;
+		private static int HIWORD(IntPtr ptr) => (ptr.ToInt32() >> 16) & 0xFFFF;
+		private static int LOWORD(IntPtr ptr) => ptr.ToInt32() & 0xFFFF;
+		private IntPtr Hook(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled) {
+			switch (msg) {
+				case WM_MOUSEHWHEEL:
+					int tilt = (short)HIWORD(wParam);
+					MouseWheelHorizontal?.Invoke(this, new MouseWheelEventArgs(Mouse.PrimaryDevice, Environment.TickCount, tilt));
+					return (IntPtr)1;
+			}
+			return IntPtr.Zero;
+		}
+
+		private void RecipientsPanel_MouseEnter(object sender, MouseEventArgs e) {
+			RecipientsPanel.Opacity = 1.0;
+		}
+
+		private void RecipientsPanel_MouseLeave(object sender, MouseEventArgs e) {
+			RecipientsPanel.Opacity = 0.2;
 		}
 	}
 }

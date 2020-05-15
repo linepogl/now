@@ -4,7 +4,7 @@
 				xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 				xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 				mc:Ignorable="d"
-				Height="336" Width="500" ResizeMode="NoResize" ShowInTaskbar="False" Opacity="0.9" Closing="Window_Closing" KeyDown="Window_KeyDown" Topmost="True" ShowActivated="False" MouseDown="Window_MouseDown" MouseWheel="Window_MouseWheel" Background="#F2E6E9ED" Padding="1" Margin="0" UseLayoutRounding="True" WindowStyle="None" AllowsTransparency="True">
+				Height="336" Width="500" ResizeMode="NoResize" ShowInTaskbar="False" Opacity="0.9" Closing="Window_Closing" KeyDown="Window_KeyDown" Topmost="True" ShowActivated="False" MouseDown="Window_MouseDown" MouseWheel="Window_MouseWheel" Background="#F2E6E9ED" Padding="1" Margin="0" UseLayoutRounding="True" WindowStyle="None" AllowsTransparency="True" SourceInitialized="Window_SourceInitialized">
 	<DockPanel>
 		<Grid x:Name="HeaderBlock" Background="#FFFFFFFF" Margin="1,1,0,0" Grid.Row="0" DockPanel.Dock="Top" Height="112">
 			<Grid.ColumnDefinitions>
@@ -12,20 +12,24 @@
 				<ColumnDefinition/>
 			</Grid.ColumnDefinitions>
 			<Ellipse x:Name="DropCapEllipsis" Fill="#FFD770AD" HorizontalAlignment="Left" Height="80" Margin="16,16,0,0" VerticalAlignment="Top" Width="81"/>
-			<TextBlock x:Name="SenderTextBlock" Margin="0,16,96,0" TextWrapping="Wrap" Text="Lazare Inepologlou &lt;linepogl@gmail.com&gt;" VerticalAlignment="Top" Height="16" Foreground="#FF242628" Grid.Column="1"/>
+			<TextBlock x:Name="SenderTextBlock" Margin="0,16,72,0" TextWrapping="Wrap" Text="Lazare Inepologlou &lt;linepogl@gmail.com&gt;" VerticalAlignment="Top" Height="16" Foreground="#FF242628" Grid.Column="1"/>
 			<TextBlock x:Name="SubjectTextBlock" Margin="0,34,16,0" TextWrapping="Wrap" Text="This is a test subject" VerticalAlignment="Top" FontSize="20" Height="32" Foreground="#FF242628" Grid.Column="1"/>
 			<WrapPanel x:Name="LabelsPanel" Height="18" Margin="0,76,16,0" VerticalAlignment="Top" Grid.Column="1">
 				<TextBlock HorizontalAlignment="Left" Margin="1,0,4,0" TextWrapping="Wrap" Text="so" VerticalAlignment="Top" Background="#FF71D561" Foreground="White" SnapsToDevicePixels="True" Padding="8,0,8,2" Height="18"/>
 				<TextBlock HorizontalAlignment="Left" Margin="1,0,3,0" TextWrapping="Wrap" Text="so/gitlab" VerticalAlignment="Top" Background="#FF61D5D0" Foreground="White" SnapsToDevicePixels="True" Padding="8,0" Height="18"/>
 			</WrapPanel>
 			<TextBlock x:Name="DropCapTextBlock" Margin="0" TextWrapping="Wrap" Text="X" VerticalAlignment="Center" FontSize="40" TextAlignment="Center" HorizontalAlignment="Center" Padding="1,0,0,5" UseLayoutRounding="False" Foreground="White"/>
+			<DockPanel x:Name="RecipientsPanel" Grid.Column="1" Margin="0,16,16,0" HorizontalAlignment="Right" Height="16" VerticalAlignment="Top" Width="48" Opacity="0.2" MouseEnter="RecipientsPanel_MouseEnter" MouseLeave="RecipientsPanel_MouseLeave">
+				<Image Margin="0" Source="/Now;component/res/img_user.png" Opacity="0.7" HorizontalAlignment="Right" Width="15" Height="15" VerticalAlignment="Bottom" DockPanel.Dock="Right"/>
+				<TextBlock x:Name="RecipientsTextBlock" Margin="0" TextWrapping="Wrap" Text="8" Foreground="#FF54595F" TextAlignment="Right" Height="16" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="32"/>
+			</DockPanel>
 		</Grid>
 		<Grid x:Name="ActionsBlock" Grid.Row="2" ClipToBounds="True" VerticalAlignment="Bottom" Margin="0" DockPanel.Dock="Bottom" Height="40">
 			<StackPanel x:Name="ActionsInnerBlock" Margin="0,0,0,-40" VerticalAlignment="Top">
 				<Grid x:Name="MarkAsReadBlock" Background="#FFF6BB42" Margin="0" Height="40" VerticalAlignment="Top" >
 					<TextBlock  Text="Mark as Read" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center" Padding="0,0,0,2" FontSize="14" FontFamily="Segoe UI Semibold" />
 				</Grid>
-				<Grid x:Name="DeleteBlock" Background="#FFDA4453" Height="40" VerticalAlignment="Top" >
+				<Grid x:Name="DeleteBlock" Background="#FFDA4453" Height="80" VerticalAlignment="Top" >
 					<TextBlock Text="Delete" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center" Padding="0,0,0,2" FontSize="14" FontFamily="Segoe UI Semibold" />
 				</Grid>
 			</StackPanel>

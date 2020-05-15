@@ -17,9 +17,15 @@ namespace Now {
 		#region Components
 		public System.Windows.Forms.NotifyIcon NotifyIcon;
 		public System.Windows.Forms.ContextMenuStrip ContextMenu;
-		public System.Windows.Forms.ToolStripItem ContextMenuSync;
-		public System.Windows.Forms.ToolStripItem ContextMenuConn;
-		public System.Windows.Forms.ToolStripItem ContextMenuExit;
+		public System.Windows.Forms.ToolStripMenuItem ContextMenuSync;
+		public System.Windows.Forms.ToolStripMenuItem ContextMenuShow;
+		public System.Windows.Forms.ToolStripMenuItem ContextMenuHide;
+		public System.Windows.Forms.ToolStripMenuItem ContextMenuPrev;
+		public System.Windows.Forms.ToolStripMenuItem ContextMenuNext;
+		public System.Windows.Forms.ToolStripMenuItem ContextMenuMark;
+		public System.Windows.Forms.ToolStripMenuItem ContextMenuKill;
+		public System.Windows.Forms.ToolStripMenuItem ContextMenuConn;
+		public System.Windows.Forms.ToolStripMenuItem ContextMenuExit;
 		public System.Windows.Forms.Timer Timer;
 		public KeyboardHook KeyboardHook;
 		public NotificationWindow NotificationWindow;
@@ -31,9 +37,9 @@ namespace Now {
 		public System.Drawing.Icon icoNoUnreadMessages;
 		public System.Drawing.Icon icoUnreadMessages;
 		private void InitialiseComponents() {
-			NotificationWindow = new NotificationWindow(Gmail);
-
 			var res = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceNames();
+			NotificationWindow = new NotificationWindow(Gmail);
+			NotificationWindow.Updated += NotificationWindow_Updated;
 
 			var assembly = System.Reflection.Assembly.GetExecutingAssembly();
 			icoNotConnected = System.Drawing.Icon.FromHandle(new System.Drawing.Bitmap(assembly.GetManifestResourceStream("Now.res.status_not_connected.png")).GetHicon());
@@ -51,19 +57,62 @@ namespace Now {
 			NotifyIcon.ContextMenuStrip = ContextMenu = new System.Windows.Forms.ContextMenuStrip();
 			NotifyIcon.DoubleClick += NotifyIcon_DoubleClicked;
 
-			ContextMenuSync = ContextMenu.Items.Add("Synchronise");
+			ContextMenuSync = new System.Windows.Forms.ToolStripMenuItem("Synchronise");
 			ContextMenuSync.Available = false;
+			ContextMenuSync.ShowShortcutKeys = true;
+			ContextMenuSync.ShortcutKeyDisplayString = "Ctrl+Alt + /";
 			ContextMenuSync.Font = new System.Drawing.Font(ContextMenuSync.Font, ContextMenuSync.Font.Style | System.Drawing.FontStyle.Bold);
 			ContextMenuSync.Click += ContextMenuSync_Clicked;
+			ContextMenu.Items.Add(ContextMenuSync);
+			ContextMenu.Items.Add("-");
 
-			ContextMenuConn = ContextMenu.Items.Add("Connect");
+			ContextMenuShow = new System.Windows.Forms.ToolStripMenuItem("Open");
+			ContextMenuShow.ShowShortcutKeys = true;
+			ContextMenuShow.ShortcutKeyDisplayString = "Ctrl+Alt + ;";
+			ContextMenuShow.Click += ContextMenuShow_Clicked;
+			ContextMenu.Items.Add(ContextMenuShow);
+
+			ContextMenuHide = new System.Windows.Forms.ToolStripMenuItem("Hide");
+			ContextMenuHide.Available = false;
+			ContextMenuHide.ShowShortcutKeys = true;
+			ContextMenuHide.ShortcutKeyDisplayString = "Ctrl+Alt + .";
+			ContextMenuHide.Click += ContextMenuHide_Clicked;
+			ContextMenu.Items.Add(ContextMenuHide);
+
+			ContextMenuPrev = new System.Windows.Forms.ToolStripMenuItem("Previous message");
+			ContextMenuPrev.Available = false;
+			ContextMenuPrev.ShowShortcutKeys = true;
+			ContextMenuPrev.ShortcutKeyDisplayString = "Ctrl+Alt + [";
+			ContextMenuPrev.Click += ContextMenuPrev_Clicked;
+			ContextMenu.Items.Add(ContextMenuPrev);
+
+			ContextMenuNext = new System.Windows.Forms.ToolStripMenuItem("Next message");
+			ContextMenuNext.Available = false;
+			ContextMenuNext.ShowShortcutKeys = true;
+			ContextMenuNext.ShortcutKeyDisplayString = "Ctrl+Alt + ]";
+			ContextMenuNext.Click += ContextMenuNext_Clicked;
+			ContextMenu.Items.Add(ContextMenuNext);
+
+			ContextMenuMark = new System.Windows.Forms.ToolStripMenuItem("Mark message as read");
+			ContextMenuMark.Available = false;
+			ContextMenuMark.Click += ContextMenuMark_Clicked;
+			ContextMenu.Items.Add(ContextMenuMark);
+
+			ContextMenuKill = new System.Windows.Forms.ToolStripMenuItem("Delete message");
+			ContextMenuKill.Available = false;
+			ContextMenuKill.Click += ContextMenuKill_Clicked;
+			ContextMenu.Items.Add(ContextMenuKill);
+
+			ContextMenuConn = new System.Windows.Forms.ToolStripMenuItem("Connect");
 			ContextMenuConn.Available = true;
 			ContextMenuConn.Font = new System.Drawing.Font(ContextMenuConn.Font, ContextMenuConn.Font.Style | System.Drawing.FontStyle.Bold);
 			ContextMenuConn.Click += ContextMenuConn_Clicked;
+			ContextMenu.Items.Add(ContextMenuConn);
 
 			ContextMenu.Items.Add("-");
-			ContextMenuExit = NotifyIcon.ContextMenuStrip.Items.Add("Exit");
+			ContextMenuExit = new System.Windows.Forms.ToolStripMenuItem("Exit");
 			ContextMenuExit.Click += ContextMenuExit_Clicked;
+			ContextMenu.Items.Add(ContextMenuExit);
 
 			Gmail.StatusChanged += Gmail_StatusChanged;
 			Gmail.Connected += Gmail_Connected;
@@ -102,10 +151,32 @@ namespace Now {
 			await Gmail.Sync(SyncInterval);
 		}
 
-		private void Gmail_StatusChanged() {
+		private void NotificationWindow_Updated(object sender, EventArgs e) {
+			this.UpdateContextMenu();
+		}
+
+		private void UpdateContextMenu() {
+			var count = Gmail.CountUnmarkedMessages();
 			ContextMenuConn.Available = Gmail.Status == Status.NotConnected || Gmail.Status == Status.Connecting;
-			ContextMenuSync.Available = Gmail.Status == Status.Synchronising || Gmail.Status == Status.StandBy;
+			ContextMenuSync.Available = Gmail.Status == Status.Synchronising || Gmail.Status == Status.SynchronisingFirstTime || Gmail.Status == Status.StandBy;
 			ContextMenuSync.Enabled = Gmail.Status == Status.StandBy;
+
+			ContextMenuShow.Available = !NotificationWindow.IsVisible;
+			ContextMenuHide.Available = NotificationWindow.IsVisible;
+			ContextMenuPrev.Available = Gmail.Status > Status.Connecting;
+			ContextMenuNext.Available = Gmail.Status > Status.Connecting;
+			ContextMenuMark.Available = Gmail.Status > Status.Connecting;
+			ContextMenuKill.Available = Gmail.Status > Status.Connecting;
+
+			ContextMenuShow.Enabled = count > 0;
+			ContextMenuPrev.Enabled = NotificationWindow.IsVisible && count > 1 && NotificationWindow.Index > 0;
+			ContextMenuNext.Enabled = NotificationWindow.IsVisible && count > 1 && NotificationWindow.Index < count - 1;
+			ContextMenuMark.Enabled = NotificationWindow.IsVisible && count > 0;
+			ContextMenuKill.Enabled = NotificationWindow.IsVisible && count > 0;
+		}
+
+		private void Gmail_StatusChanged() {
+			this.UpdateContextMenu();
 			switch (Gmail.Status) {
 				case Status.NotConnected: 
 					NotifyIcon.Icon = icoNotConnected;
@@ -158,7 +229,32 @@ namespace Now {
 		}
 
 		private async void ContextMenuSync_Clicked(object sender, EventArgs e) {
+			Gmail.HasSynchronisedEver = false;
 			await Gmail.Sync(SyncInterval);
+		}
+
+		private void ContextMenuShow_Clicked(object sender, EventArgs e) {
+			if (!NotificationWindow.IsVisible && Gmail.CountUnmarkedMessages() > 0) NotificationWindow.AnimateShow();
+		}
+
+		private void ContextMenuHide_Clicked(object sender, EventArgs e) {
+			if (NotificationWindow.IsVisible) NotificationWindow.AnimateHide();
+		}
+
+		private void ContextMenuPrev_Clicked(object sender, EventArgs e) {
+			if (NotificationWindow.IsVisible) NotificationWindow.Index--;
+		}
+
+		private void ContextMenuNext_Clicked(object sender, EventArgs e) {
+			if (NotificationWindow.IsVisible) NotificationWindow.Index++;
+		}
+
+		private async void ContextMenuMark_Clicked(object sender, EventArgs e) {
+			if (NotificationWindow.IsVisible) await NotificationWindow.MarkAsRead();
+		}
+
+		private async void ContextMenuKill_Clicked(object sender, EventArgs e) {
+			if (NotificationWindow.IsVisible) await NotificationWindow.Delete();
 		}
 
 		private async void Timer_Tick(object sender, EventArgs e) {
@@ -195,11 +291,11 @@ namespace Now {
 		private void KeyboardHook_KeyPressed(object sender, KeyPressedEventArgs e) {
 			if (NotificationWindow.IsVisible) {
 				switch (e.Key) {
-					case System.Windows.Forms.Keys.OemQuestion: NotificationWindow.AnimateHide(); break;
+					case System.Windows.Forms.Keys.OemQuestion: NotifyIcon_DoubleClicked(sender, e); break;
 					case System.Windows.Forms.Keys.OemSemicolon: NotificationWindow.ReactionUp(); break;
 					case System.Windows.Forms.Keys.OemPeriod: NotificationWindow.ReactionDown(); break;
-					case System.Windows.Forms.Keys.OemOpenBrackets: NotificationWindow.Index--; break;
-					case System.Windows.Forms.Keys.OemCloseBrackets: NotificationWindow.Index++; break;
+					case System.Windows.Forms.Keys.OemOpenBrackets: ContextMenuPrev_Clicked(sender, e); break;
+					case System.Windows.Forms.Keys.OemCloseBrackets: ContextMenuNext_Clicked(sender, e); break;
 				}
 			}
 			else {

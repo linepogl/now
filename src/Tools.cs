@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Animation;
@@ -160,5 +161,9 @@ namespace Now {
 				yield return x;
 		}
 
+		public static Action Debounce(this Action func, int milliseconds = 300) {
+			var timer = new Timer(s => { func.Invoke(); });
+			return () => { timer.Change(milliseconds, Timeout.Infinite); };
+		}
 	}
 }
