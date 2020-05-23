@@ -229,8 +229,7 @@ namespace Now {
 		}
 
 		private async void ContextMenuSync_Clicked(object sender, EventArgs e) {
-			Gmail.HasSynchronisedEver = false;
-			await Gmail.Sync(SyncInterval);
+			await Gmail.Sync(SyncInterval, true);
 		}
 
 		private void ContextMenuShow_Clicked(object sender, EventArgs e) {

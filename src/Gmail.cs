@@ -73,7 +73,7 @@ namespace Now {
 		//
 		//
 		private CancellationTokenSource sync_in_progress = null;
-		public async Task Sync(TimeSpan interval) {
+		public async Task Sync(TimeSpan interval, bool forced = false) {
 			if (sync_in_progress != null) sync_in_progress.Cancel();
 			sync_in_progress = new CancellationTokenSource();
 			try {
@@ -83,6 +83,7 @@ namespace Now {
 					await this.LocalLabels.Sync(this);
 					var messages = this.LocalMessages.Clone();
 					var new_messages = await messages.Sync(this);
+					if (forced) new_messages = messages.ToList();
 					this.LocalMessages = messages;
 					var is_first_sync = !this.HasSynchronisedEver;
 					this.HasSynchronisedEver = true;
