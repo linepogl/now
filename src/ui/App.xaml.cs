@@ -168,11 +168,10 @@ namespace Now {
 			ContextMenuMark.Available = Gmail.Status > Status.Connecting;
 			ContextMenuKill.Available = Gmail.Status > Status.Connecting;
 
-			ContextMenuShow.Enabled = count > 0;
-			ContextMenuPrev.Enabled = NotificationWindow.IsVisible && count > 1 && NotificationWindow.Index > 0;
-			ContextMenuNext.Enabled = NotificationWindow.IsVisible && count > 1 && NotificationWindow.Index < count - 1;
-			ContextMenuMark.Enabled = NotificationWindow.IsVisible && count > 0;
-			ContextMenuKill.Enabled = NotificationWindow.IsVisible && count > 0;
+			ContextMenuPrev.Enabled = NotificationWindow.IsVisible && count > 0;
+			ContextMenuNext.Enabled = NotificationWindow.IsVisible && count > 0;
+			ContextMenuMark.Enabled = NotificationWindow.IsVisible && NotificationWindow.Message != null;
+			ContextMenuKill.Enabled = NotificationWindow.IsVisible && NotificationWindow.Message != null;
 		}
 
 		private void Gmail_StatusChanged() {
@@ -233,7 +232,7 @@ namespace Now {
 		}
 
 		private void ContextMenuShow_Clicked(object sender, EventArgs e) {
-			if (!NotificationWindow.IsVisible && Gmail.CountUnmarkedMessages() > 0) NotificationWindow.AnimateShow();
+			if (!NotificationWindow.IsVisible) NotificationWindow.AnimateShow();
 		}
 
 		private void ContextMenuHide_Clicked(object sender, EventArgs e) {
@@ -300,7 +299,7 @@ namespace Now {
 			else {
 				switch (e.Key) {
 					case System.Windows.Forms.Keys.OemQuestion: NotifyIcon_DoubleClicked(sender, e); break;
-					case System.Windows.Forms.Keys.OemSemicolon: if (Gmail.CountUnmarkedMessages() > 0) NotificationWindow.AnimateShow(); break;
+					case System.Windows.Forms.Keys.OemSemicolon: NotificationWindow.AnimateShow(); break;
 				}
 			}
 		}

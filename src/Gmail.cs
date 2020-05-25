@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Google.Apis.Auth.OAuth2;
+using Google.Apis.Calendar.v3;
 using Google.Apis.Gmail.v1;
 using Google.Apis.Services;
 
@@ -19,13 +20,20 @@ namespace Now {
 	public class Gmail {
 		public LocalLabelCollection LocalLabels;
 		public LocalMessageCollection LocalMessages;
+		public LocalEventCollection LocalEvents;
+		public LocalCalendarCollection LocalCalendars;
 		public Gmail() {
 			this.LocalLabels = new LocalLabelCollection();
 			this.LocalMessages = new LocalMessageCollection();
+			this.LocalCalendars = new LocalCalendarCollection();
+			this.LocalEvents = new LocalEventCollection();
 		}
 
 		private GmailService Service = null;
 		public UsersResource Api => Service?.Users;
+		
+		private CalendarService CalendarService = null;
+		public CalendarService CalendarApi => CalendarService;
 
 		public event Action Connecting;
 		public event Action Connected;
@@ -55,17 +63,17 @@ namespace Now {
 			try {
 				var credentials = await GoogleWebAuthorizationBroker.AuthorizeAsync(
 					GoogleClientSecrets.Load(System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Now.res.google_oauth_credentials.json")).Secrets,
-					new String[] { GmailService.ScopeConstants.MailGoogleCom }, "user", connection_in_progress.Token
+					new String[] { GmailService.Scope.MailGoogleCom, CalendarService.Scope.CalendarReadonly }, "user", connection_in_progress.Token
 					);
 				var initialiser = new BaseClientService.Initializer { ApplicationName = "Now", HttpClientInitializer = credentials };
 				this.Service = new GmailService(initialiser);
+				this.CalendarService = new CalendarService(initialiser);
 				this.Status = Status.StandBy; this.Connected?.Invoke();
 			}
 			catch (Exception) {
 				this.Status = Status.NotConnected;
 			}
 		}
-
 
 		//
 		//
@@ -80,7 +88,13 @@ namespace Now {
 				var token = sync_in_progress.Token;
 				while (!token.IsCancellationRequested) {
 					this.Status = this.HasSynchronisedEver ? Status.Synchronising : Status.SynchronisingFirstTime; this.Synchronising?.Invoke();
-					await this.LocalLabels.Sync(this);
+					if (forced || !this.HasSynchronisedEver) {
+						await this.LocalLabels.Sync(this);
+						await this.LocalCalendars.Sync(this);
+					}
+					var events = this.LocalEvents.Clone();
+					var new_events = await events.Sync(this);
+					this.LocalEvents = events;
 					var messages = this.LocalMessages.Clone();
 					var new_messages = await messages.Sync(this);
 					if (forced) new_messages = messages.ToList();

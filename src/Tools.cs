@@ -69,8 +69,9 @@ namespace Now {
 		public static string FormatDuration(TimeSpan? input) {
 			if (input == null) return null;
 			var d = input.Value;
-			return 
-				((d.Hours == 0 ? "" : d.Hours == 1 ? "1 hour" : d.Hours + " hours")
+			return
+				((d.Days == 0 ? "" : d.Days == 1 ? "all day" : d.Days + " days")
+				+ (d.Hours == 0 ? "" : d.Hours == 1 ? "1 hour" : d.Hours + " hours")
 				+ (d.Minutes == 0 ? "" : d.Minutes == 1 ? " 1 minute" : " " + d.Minutes + " minutes")
 				).Trim();
 		}
@@ -164,6 +165,24 @@ namespace Now {
 		public static Action Debounce(this Action func, int milliseconds = 300) {
 			var timer = new Timer(s => { func.Invoke(); });
 			return () => { timer.Change(milliseconds, Timeout.Infinite); };
+		}
+
+		public static void Sort<T>(this IList<T> list, Comparison<T> comparison) {
+			ArrayList.Adapter((IList)list).Sort(Comparer<T>.Create(comparison));
+		}
+
+		public static void Sort<T>(this IList<T> list) where T : IComparable<T> {
+			ArrayList.Adapter((IList)list).Sort();
+		}
+
+		public static void SortBy<T, K>(this IList<T> list, params Func<T, K>[] by) where K : IComparable<K> {
+			ArrayList.Adapter((IList)list).Sort(Comparer<T>.Create((x, y) => {
+				foreach (var by_what in by) {
+					var c = by_what(x).CompareTo(by_what(y));
+					if (c != 0) return c;
+				}
+				return 0;
+			}));
 		}
 	}
 }

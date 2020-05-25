@@ -37,8 +37,8 @@ namespace Now {
 			set {
 				var total = this.Messages.Count();
 				_index = total == 0 ? -1
-							 : value < 0 ? 0
-							 : value >= total ? total - 1
+							 : value < -1 ? total - 1
+							 : value >= total ? -1
 							 : value;
 				var old_message = _message;
 				_message = _index < 0 ? null : this.Messages[_index];
@@ -70,7 +70,6 @@ namespace Now {
 		};
 
 		public void Update() {
-			if (Message == null) { this.AnimateHide(); return; }
 			this.PositionWindow();
 
 			// Update bullets
@@ -84,42 +83,55 @@ namespace Now {
 			BulletsOverflowTextBlock.Visibility = total > max ? Visibility.Visible : Visibility.Hidden;
 			BulletsOverflowTextBlock.Foreground = Index >= max ? BlueBrush : WhiteBrush;
 			IndexTextBlock.Text = (Index + 1).ToString() + " / " + total.ToString();
-			WebBrowser.Body = Message.Body;
 
-			// Update message
-			SubjectTextBlock.Text = Message.Subject;
-			SubjectTextBlock.ToolTip = Message.Subject;
-			SenderTextBlock.Text = Message.From;
-			SenderTextBlock.ToolTip = Message.From;
-			SnippetTextBlock.Text = Message.Snippet;
-			SnippetTextBlock.Visibility = Message.IsInvitation ? Visibility.Hidden : Visibility.Visible;
-			InvitationPanel.Visibility = !Message.IsInvitation ? Visibility.Hidden : Visibility.Visible;
-
-			RecipientsTextBlock.Text = (Message.To.Count() + Message.CC.Count).ToString();
-			RecipientsPanel.ToolTip = "To\n" + String.Join("\n", Message.To);
-			if (Message.CC.Count > 0) RecipientsPanel.ToolTip += "\n\nCC\n" + String.Join("\n", Message.CC);
-
-			AttachmentsPanel.Visibility = Message.CountAttachments == 0 ? Visibility.Hidden : Visibility.Visible;
-			AttachmentsTextBlock.Text = Message.CountAttachments.ToString();
-
-			if (Message.IsInvitation) {
-				InvitationDateTimeTextBlock.Text = Message.InvitationDateFrom.Value.ToString(@"dddd, d MMM yyyy \a\t HH:mm", System.Globalization.CultureInfo.GetCultureInfo("en-US"));
-				InvitationStartsInTextBlock.Text = Tools.FormatRelativeDateTime(Message.InvitationDateFrom);
-				InvitationDurationTextBlock.Text = Tools.FormatDuration(Message.InvitationDuration);
-			}
-
-			var s = Message.From.TrimStart().TrimStart('"', '<').TrimStart();
-			DropCapTextBlock.Text = (s == "" ? "?" : s.Substring(0, 1)).ToUpper();
-			DropCapEllipsis.Fill = Brushes[Math.Abs(Message.From.GetHashCode()) % Brushes.Length];
-
+			IndexTextBlock.Visibility = this.Message == null ? Visibility.Hidden : Visibility.Visible;
+			SnippetTextBlock.Visibility = this.Message == null || this.Message != null && !Message.IsInvitation ? Visibility.Visible : Visibility.Hidden;
+			InvitationPanel.Visibility = this.Message != null && Message.IsInvitation ? Visibility.Visible : Visibility.Hidden;
+			AttachmentsPanel.Visibility = this.Message != null && Message.Attachments.Count > 0 ? Visibility.Visible : Visibility.Hidden;
 			LabelsPanel.Children.Clear();
-			foreach (var label in Message.Labels) {
-				LabelsPanel.Children.Add(new TextBlock {
-					Text = label.Name, Height = 18, FontSize = 12, SnapsToDevicePixels = true,
-					Margin = new Thickness(1, 0, 3, 0), Padding = new Thickness(8, 0, 8, 0),
-					Background = new SolidColorBrush(label.BgColor),
-					Foreground = new SolidColorBrush(label.FgColor),
-				});
+
+			if (this.Message != null) {
+				// Update message
+				SubjectTextBlock.Text = Message.Subject;
+				SubjectTextBlock.ToolTip = Message.Subject;
+				SenderTextBlock.Text = Message.From;
+				SenderTextBlock.ToolTip = Message.From;
+				SnippetTextBlock.Text = Message.Snippet;
+				WebBrowser.Body = Message.Body;
+				RecipientsTextBlock.Text = (Message.To.Count() + Message.CC.Count).ToString();
+				RecipientsPanel.ToolTip = "To\n" + String.Join("\n", Message.To);
+				if (Message.CC.Count > 0) RecipientsPanel.ToolTip += "\n\nCC\n" + String.Join("\n", Message.CC);
+				AttachmentsTextBlock.Text = Message.Attachments.Count.ToString();
+				AttachmentsPanel.ToolTip = String.Join("\n", Message.Attachments);
+				if (Message.IsInvitation) {
+					InvitationDateTimeTextBlock.Text = Message.InvitationDateFrom.Value.ToString(@"dddd, d MMM yyyy \a\t HH:mm", System.Globalization.CultureInfo.GetCultureInfo("en-US"));
+					InvitationStartsInTextBlock.Text = Tools.FormatRelativeDateTime(Message.InvitationDateFrom);
+					InvitationDurationTextBlock.Text = Tools.FormatDuration(Message.InvitationDuration);
+				}
+				var s = Message.From.TrimStart().TrimStart('"', '<').TrimStart();
+				DropCapTextBlock.Text = (s == "" ? "?" : s.Substring(0, 1)).ToUpper();
+				DropCapEllipsis.Fill = Brushes[Math.Abs(Message.From.GetHashCode()) % Brushes.Length];
+				foreach (var label in Message.Labels) {
+					LabelsPanel.Children.Add(new TextBlock {
+						Text = label.Name, Height = 18, FontSize = 12, SnapsToDevicePixels = true,
+						Margin = new Thickness(1, 0, 3, 0), Padding = new Thickness(8, 0, 8, 0),
+						Background = new SolidColorBrush(label.BgColor),
+						Foreground = new SolidColorBrush(label.FgColor),
+					});
+				}
+			}
+			else {
+				SenderTextBlock.Text = "";
+				SenderTextBlock.ToolTip = null;
+				SubjectTextBlock.Text = DateTime.Today.ToString("ddd, d MMM", System.Globalization.CultureInfo.GetCultureInfo("en-US"));
+				SubjectTextBlock.ToolTip = null;
+
+				var s = "";
+				foreach (var e in Gmail.LocalEvents) {
+					s += e.Subject + " - " + Tools.FormatRelativeDateTime(e.DateFrom) + " - " + Tools.FormatDuration(e.Duration) + "\n";
+				}
+
+				SnippetTextBlock.Text = s;
 			}
 		}
 
@@ -178,7 +190,7 @@ namespace Now {
 
 		public void AnimateShow() {
 			if (this.IsVisible) return;
-			this.PositionWindow();
+			this.Update();
 			this.Opacity = 0;
 			this.Top = SystemParameters.WorkArea.Height;
 			this.Show();
@@ -224,7 +236,12 @@ namespace Now {
 		private double TargetExtraHeight => this.ReactionLevel == Reaction.None ? 0 : this.ReactionLevel == Reaction.MarkAsRead ? ActionsHeight : 2 * ActionsHeight;
 		private double TargetWidth => this.Full ? ExpandedWidth : StandardWidth;
 		private double TargetHeight => (this.Full ? ExpandedHeight : StandardHeight) + TargetExtraHeight;
-		public bool Full = false;
+		
+		private bool _full = false;
+		public bool Full {
+			get => _full;
+			set { _full = value; this.PositionWindow(); }
+		}
 
 		private void PositionWindow() {
 			var screen = SystemParameters.WorkArea;
@@ -234,8 +251,8 @@ namespace Now {
 			this.Left = screen.Width - this.Width - 8;
 			this.ActionsBlock.Height = this.TargetExtraHeight;
 			var webbrowser_top_margin = this.HeaderBlock.ActualHeight + 16;
-			if (Message.IsInvitation) webbrowser_top_margin += this.InvitationPanel.ActualHeight + 16;
-			if (this.Full) this.WebBrowser.Show(); else this.WebBrowser.Hide();
+			if (this.Message != null && this.Message.IsInvitation) webbrowser_top_margin += this.InvitationPanel.ActualHeight + 16;
+			if (this.Full && this.Message != null) this.WebBrowser.Show(); else this.WebBrowser.Hide();
 			this.WebBrowser.Top = this.Top + webbrowser_top_margin;
 			this.WebBrowser.Left = this.Left + 112;
 			this.WebBrowser.Width = this.Width - 112 - 8;
@@ -276,11 +293,13 @@ namespace Now {
 		}
 
 		public async void ReactionUp() {
+			if (this.Message == null) return;
 			switch (ReactionLevel) {
 				case Reaction.None: await this.React(Reaction.MarkAsRead); break;
 				case Reaction.MarkAsRead: await this.React(Reaction.Delete); break;
 			}
 		}
+
 		public async void ReactionDown() {
 			switch (ReactionLevel) {
 				case Reaction.None: this.AnimateHide(); break;
@@ -290,16 +309,7 @@ namespace Now {
 		}
 
 		private void Window_MouseDown(object sender, MouseButtonEventArgs e) {
-			this.ToggleWebBrowser();
-		}
-
-		private void ToggleWebBrowser() {
 			this.Full = !this.Full;
-			this.PositionWindow();
-			if (this.Full) 
-				WebBrowser.Show();
-			else 
-				WebBrowser.Hide();
 		}
 
 		private void Window_SourceInitialized(object sender, EventArgs e) {
@@ -326,6 +336,14 @@ namespace Now {
 
 		private void RecipientsPanel_MouseLeave(object sender, MouseEventArgs e) {
 			RecipientsPanel.Opacity = 0.2;
+		}
+
+		private void AttachmentsPanel_MouseEnter(object sender, MouseEventArgs e) {
+			AttachmentsPanel.Opacity = 1.0;
+		}
+
+		private void AttachmentsPanel_MouseLeave(object sender, MouseEventArgs e) {
+			AttachmentsPanel.Opacity = 0.8;
 		}
 	}
 }

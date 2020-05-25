@@ -4,8 +4,8 @@
 				xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 				xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 				mc:Ignorable="d"
-				Height="336" Width="500" ResizeMode="NoResize" ShowInTaskbar="False" Opacity="0.9" Closing="Window_Closing" KeyDown="Window_KeyDown" Topmost="True" ShowActivated="False" MouseDown="Window_MouseDown" MouseWheel="Window_MouseWheel" Background="#F2E6E9ED" Padding="1" Margin="0" UseLayoutRounding="True" WindowStyle="None" AllowsTransparency="True" SourceInitialized="Window_SourceInitialized">
-	<DockPanel>
+				Height="334" Width="500" ResizeMode="NoResize" ShowInTaskbar="False" Opacity="0.9" Closing="Window_Closing" KeyDown="Window_KeyDown" Topmost="True" ShowActivated="False" MouseDown="Window_MouseDown" MouseWheel="Window_MouseWheel" Background="{x:Null}" Padding="1" Margin="0" UseLayoutRounding="True" WindowStyle="None" AllowsTransparency="True" SourceInitialized="Window_SourceInitialized">
+	<DockPanel Background="#F2E6E9ED" Margin="0">
 		<Grid x:Name="HeaderBlock" Background="#FFFFFFFF" Margin="1,1,0,0" Grid.Row="0" DockPanel.Dock="Top" Height="112">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="112"/>
@@ -34,13 +34,13 @@
 				</Grid>
 			</StackPanel>
 		</Grid>
-		<Grid x:Name="MainBlock" Margin="0" Background="#00000000" Grid.Row="1" DockPanel.Dock="Top">
+		<Grid x:Name="MainBlock" Margin="0" Grid.Row="1" DockPanel.Dock="Top">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="112"/>
 				<ColumnDefinition/>
 			</Grid.ColumnDefinitions>
-			<TextBlock x:Name="SnippetTextBlock" Margin="0,16,16,48" TextWrapping="Wrap" Foreground="#FF242628" FontFamily="Dubai Light" FontSize="14" Grid.Column="1"><Run Text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus faucibus libero et magna ultrices, sit amet pellentesque eros dignissim. In egestas ornare pulvinar. Aenean aliquam pulvinar risus id aliquam. Duis ullamcorper nulla felis, vitae accumsan ante aliquet mollis. Donec maximus nunc vel pretium efficitur. Vestibulum laoreet diam sed nulla maximus, quis viverra quam vehicula. Maecenas vestibulum tempor mauris ac efficitur. Integer vitae odio vel nunc facilisis elementum. In eu ipsum viverra, sagittis urna eget, porttitor turpis. Proin risus felis, scelerisque id tellus sed, fringilla viverra enim. Vivamus luctus leo quis sollicitudin suscipit. In suscipit hendrerit lorem et pulvinar. Fusce in ipsum laoreet, finibus sem vitae, finibus justo."/></TextBlock>
-			<Grid x:Name="InvitationPanel" Margin="0,16,16,0" Grid.Column="1" VerticalAlignment="Top">
+			<TextBlock x:Name="SnippetTextBlock" Margin="0,16,16,48" TextWrapping="Wrap" Foreground="#FF242628" FontFamily="Dubai Light" FontSize="14" Grid.Column="1" d:IsHidden="True"><Run Text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus faucibus libero et magna ultrices, sit amet pellentesque eros dignissim. In egestas ornare pulvinar. Aenean aliquam pulvinar risus id aliquam. Duis ullamcorper nulla felis, vitae accumsan ante aliquet mollis. Donec maximus nunc vel pretium efficitur. Vestibulum laoreet diam sed nulla maximus, quis viverra quam vehicula. Maecenas vestibulum tempor mauris ac efficitur. Integer vitae odio vel nunc facilisis elementum. In eu ipsum viverra, sagittis urna eget, porttitor turpis. Proin risus felis, scelerisque id tellus sed, fringilla viverra enim. Vivamus luctus leo quis sollicitudin suscipit. In suscipit hendrerit lorem et pulvinar. Fusce in ipsum laoreet, finibus sem vitae, finibus justo."/></TextBlock>
+			<Grid x:Name="InvitationPanel" Margin="0,16,16,0" Grid.Column="1" VerticalAlignment="Top" d:IsHidden="True">
 				<TextBlock x:Name="InvitationDateTimeTextBlock" TextWrapping="Wrap" Text="Monday, 17 Aug 2000 at 18:00" VerticalAlignment="Top" Foreground="#FF242628" FontSize="18"/>
 				<TextBlock x:Name="InvitationStartsInTextBlock" TextWrapping="Wrap" Text="in 1 hour 3 minutes" VerticalAlignment="Top" Foreground="#FF242628" Margin="0,24,0,0"/>
 				<TextBlock x:Name="InvitationDurationTextBlock" TextWrapping="Wrap" VerticalAlignment="Top" Foreground="#FF242628" FontSize="15" Margin="20,54,0,0"><Run Text="30 minu"/><Run Text="tes"/></TextBlock>
@@ -70,7 +70,7 @@
 				<Ellipse Fill="White" Height="8" Stroke="Black" Width="8" StrokeThickness="0" Margin="2,4,4,4"/>
 				<Ellipse Fill="White" Height="8" Stroke="Black" Width="8" StrokeThickness="0" Margin="2,4,4,4"/>
 			</StackPanel>
-			<DockPanel x:Name="AttachmentsPanel" Grid.Column="1" Margin="0,0,16,16" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="75">
+			<DockPanel x:Name="AttachmentsPanel" Grid.Column="1" Margin="0,0,16,16" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="48" MouseEnter="AttachmentsPanel_MouseEnter" MouseLeave="AttachmentsPanel_MouseLeave" Opacity="0.8">
 				<Image Margin="0" Source="/Now;component/res/img_attachment.png" Opacity="0.8" HorizontalAlignment="Right" Width="15" Height="15" VerticalAlignment="Bottom" DockPanel.Dock="Right"/>
 				<TextBlock x:Name="AttachmentsTextBlock" Margin="0" TextWrapping="Wrap" Text="8" Foreground="#FF54595F" TextAlignment="Right" Height="16" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="54"/>
 			</DockPanel>

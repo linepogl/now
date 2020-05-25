@@ -109,6 +109,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="src\LocalEvent.cs" />
+    <Compile Include="src\LocalCalendar.cs" />
     <Compile Include="src\ui\WebBrowser.xaml.cs">
       <DependentUpon>WebBrowser.xaml</DependentUpon>
     </Compile>
