@@ -83,7 +83,7 @@ namespace Now {
 					await this.LocalLabels.Sync(this);
 					var messages = this.LocalMessages.Clone();
 					var new_messages = await messages.Sync(this);
-					if (forced) new_messages = messages.ToList();
+					if (forced) { new_messages = messages.ToList(); forced = false; }
 					this.LocalMessages = messages;
 					var is_first_sync = !this.HasSynchronisedEver;
 					this.HasSynchronisedEver = true;
