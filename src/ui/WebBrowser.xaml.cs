@@ -11,7 +11,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using mshtml;
 
 namespace Now {
 	public partial class WebBrowser : Window {
@@ -33,10 +32,10 @@ namespace Now {
 			}
 		}
 
-		private void BodyWebBrowser_Navigated(object sender, System.Windows.Navigation.NavigationEventArgs e) {
-			var doc = BodyWebBrowser.Document as HTMLDocument;
-			var css = doc.createStyleSheet("", 0);
-			css.cssText = @"body { font: Sergoe, sans-serif; padding: 10px; background:#f5f7fa; -ms-overflow-style:none; overflow:auto;}";
-		}
+		//private void BodyWebBrowser_Navigated(object sender, System.Windows.Navigation.NavigationEventArgs e) {
+		//	var doc = BodyWebBrowser.Document as HTMLDocument;
+		//	var css = doc.createStyleSheet("", 0);
+		//	css.cssText = @"body { font: Sergoe, sans-serif; padding: 10px; background:#f5f7fa; -ms-overflow-style:none; overflow:auto;}";
+		//}
 	}
 }

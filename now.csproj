@@ -40,9 +40,6 @@
     <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.mshtml, Version=7.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -127,6 +124,20 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="res\img_user.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Google.Apis.Calendar.v3">
+      <Version>1.45.0.1928</Version>
+    </PackageReference>
+    <PackageReference Include="Google.Apis.Gmail.v1">
+      <Version>1.45.0.1927</Version>
+    </PackageReference>
+    <PackageReference Include="Ical.Net">
+      <Version>4.1.11</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Toolkit.Wpf.UI.Controls.WebView">
+      <Version>6.0.1</Version>
+    </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
