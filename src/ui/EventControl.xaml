@@ -1,0 +1,33 @@
+﻿<UserControl x:Class="Now.EventControl"
+						 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+						 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+						 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+						 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+						 xmlns:local="clr-namespace:Now"
+						 mc:Ignorable="d" 
+						 d:DesignHeight="450" d:DesignWidth="503.386" Height="40">
+	<StackPanel Orientation="Vertical">
+		<DockPanel Height="16">
+			<DockPanel x:Name="AttendeesPanel" DockPanel.Dock="Right" VerticalAlignment="Center" Margin="8,0,0,0" MouseEnter="AttendeesPanel_MouseEnter" MouseLeave="AttendeesPanel_MouseLeave" Opacity="0.5">
+				<Image DockPanel.Dock="Right" Source="/Now;component/res/img_user.png" Opacity="0.7" HorizontalAlignment="Right" Width="16" Height="16" VerticalAlignment="Center" Margin="0,0,0,1" />
+				<TextBlock DockPanel.Dock="Right" x:Name="AttendeesText" Margin="0,0,0,-0.143" TextWrapping="Wrap" Text="8" VerticalAlignment="Center" TextAlignment="Right" RenderTransformOrigin="0.5,0.5" FontSize="14"/>
+			</DockPanel>
+			<DockPanel x:Name="LocationPanel" DockPanel.Dock="Right" VerticalAlignment="Center" Margin="8,0,0,0" MouseEnter="LocationPanel_MouseEnter" MouseLeave="LocationPanel_MouseLeave" Opacity="0.5">
+				<Image x:Name="LocationIcon" DockPanel.Dock="Right" Margin="0,0,0,0" Source="/Now;component/res/img_location.png" Opacity="0.7" HorizontalAlignment="Right" Width="16" Height="16" VerticalAlignment="Center" />
+			</DockPanel>
+			<DockPanel x:Name="VideoPanel" DockPanel.Dock="Right" VerticalAlignment="Center" Margin="8,0,0,0" MouseEnter="VideoPanel_MouseEnter" MouseLeave="VideoPanel_MouseLeave" Opacity="0.5">
+				<Image x:Name="VideoIcon" DockPanel.Dock="Right" Margin="0,0,0,0" Source="/Now;component/res/img_video.png" Opacity="0.7" HorizontalAlignment="Right" Width="16" Height="16" VerticalAlignment="Center" />
+			</DockPanel>
+
+			<Ellipse x:Name="Bullet" HorizontalAlignment="Left" Height="8" Margin="2,1,6,0" VerticalAlignment="Center" Width="8" Fill="#FFB82E2E"/>
+			<TextBlock x:Name="MainText" Margin="0,0,0,0" TextWrapping="NoWrap" Text="TextBlock" VerticalAlignment="Center" FontSize="14"/>
+		</DockPanel>
+		<DockPanel Height="16">
+			<TextBlock x:Name="WhenText" Margin="16,0,0,0" TextWrapping="NoWrap" Text="in 3 hours 8 minutes" VerticalAlignment="Center"/>
+			<DockPanel x:Name="DurationPanel" VerticalAlignment="Center" Margin="8,0,0,0">
+				<Image Source="/Now;component/res/img_clock.png" Opacity="0.7" HorizontalAlignment="Right" Width="13" Height="13" VerticalAlignment="Center" Margin="0,1,2,0" />
+				<TextBlock x:Name="DurationText" Text="30 min" VerticalAlignment="Center" />
+			</DockPanel>
+		</DockPanel>
+	</StackPanel>
+</UserControl>

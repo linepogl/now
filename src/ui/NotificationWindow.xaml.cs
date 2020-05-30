@@ -85,9 +85,10 @@ namespace Now {
 			IndexTextBlock.Text = (Index + 1).ToString() + " / " + total.ToString();
 
 			IndexTextBlock.Visibility = this.Message == null ? Visibility.Hidden : Visibility.Visible;
-			SnippetTextBlock.Visibility = this.Message == null || this.Message != null && !Message.IsInvitation ? Visibility.Visible : Visibility.Hidden;
+			SnippetTextBlock.Visibility = this.Message != null && !Message.IsInvitation ? Visibility.Visible : Visibility.Hidden;
 			InvitationPanel.Visibility = this.Message != null && Message.IsInvitation ? Visibility.Visible : Visibility.Hidden;
 			AttachmentsPanel.Visibility = this.Message != null && Message.Attachments.Count > 0 ? Visibility.Visible : Visibility.Hidden;
+			EventsPanel.Visibility = this.Message == null ? Visibility.Visible : Visibility.Hidden;
 			LabelsPanel.Children.Clear();
 
 			if (this.Message != null) {
@@ -126,12 +127,9 @@ namespace Now {
 				SubjectTextBlock.Text = DateTime.Today.ToString("ddd, d MMM", System.Globalization.CultureInfo.GetCultureInfo("en-US"));
 				SubjectTextBlock.ToolTip = null;
 
-				var s = "";
-				foreach (var e in Gmail.LocalEvents) {
-					s += e.Subject + " - " + Tools.FormatRelativeDateTime(e.DateFrom) + " - " + Tools.FormatDuration(e.Duration) + "\n";
-				}
-
-				SnippetTextBlock.Text = s;
+				EventsPanel.Children.Clear();
+				foreach (var e in Gmail.LocalEvents) 
+					EventsPanel.Children.Add(new EventControl() { LocalEvent = e });
 			}
 		}
 

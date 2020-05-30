@@ -23,13 +23,14 @@ namespace Now {
 		public bool Tentative = false;
 		public TimeSpan Duration => DateTill - DateFrom;
 		public string ConferenceLink = null;
+		public bool IsFullDay = false;
 
 		public LocalEvent(string id) { this.id = id; }
 		public void Load(Google.Apis.Calendar.v3.Data.Event remote_event) {
 			this.DateUpdated = remote_event.Updated.GetValueOrDefault(DateTime.MinValue);
 			this.DateFrom = remote_event.Start.DateTime.GetValueOrDefault(DateTime.MinValue);
 			this.DateTill = remote_event.End.DateTime.GetValueOrDefault(DateTime.MinValue);
-			if (this.DateFrom == DateTime.MinValue) { try { this.DateFrom = DateTime.ParseExact(remote_event.Start.Date, "yyyy-MM-dd", CultureInfo.InvariantCulture); } catch (Exception) { } }
+			if (this.DateFrom == DateTime.MinValue) { try { this.DateFrom = DateTime.ParseExact(remote_event.Start.Date, "yyyy-MM-dd", CultureInfo.InvariantCulture); this.IsFullDay = true; } catch (Exception) { } }
 			if (this.DateTill == DateTime.MinValue) { try { this.DateTill = DateTime.ParseExact(remote_event.End.Date, "yyyy-MM-dd", CultureInfo.InvariantCulture); } catch (Exception) { } }
 			this.Subject = remote_event.Summary;
 			this.Body = remote_event.Description;
@@ -40,7 +41,7 @@ namespace Now {
 			this.Location = remote_event.Location;
 			this.Tentative = remote_event.Status == "tentative";
 
-			
+
 		}
 	}
 
@@ -53,8 +54,8 @@ namespace Now {
 		}
 		public async Task<List<LocalEvent>> Sync(Gmail gmail) {
 			var new_events = new List<LocalEvent>();
-			var from = DateTime.Now.AddHours(-2);
-			var till = DateTime.Today.AddDays(7);
+			var from = DateTime.Now;
+			var till = DateTime.Today.AddDays(1);
 
 			var remote_events = new List<Google.Apis.Calendar.v3.Data.Event>();
 			foreach (var local_calendar in gmail.LocalCalendars) {
@@ -68,7 +69,7 @@ namespace Now {
 				if (calendar_remote_events == null) continue;
 				foreach (var calendar_remote_event in calendar_remote_events) 
 					calendar_remote_event.ColorId = local_calendar.id; // little hack to keep a link to the current calendar
-				remote_events.AddRange(calendar_remote_events);
+				remote_events.AddRange(calendar_remote_events.Where(x => x.End.DateTime == null || x.End.DateTime.Value > DateTime.Now));
 			}
 			
 			var remote_event_ids = remote_events.Select(x => x.Id).Where(x => x != null).ToHashSet();
@@ -83,8 +84,8 @@ namespace Now {
 				if (!this.Contains(remote_event.Id)) {
 					var local_event = new LocalEvent(remote_event.Id);
 					local_event.Calendar = gmail.LocalCalendars[remote_event.ColorId];
-					new_events.Add(local_event);
 					local_event.Load(remote_event);
+					new_events.Add(local_event);
 				}
 				else {
 					var local_event = this[remote_event.Id];
