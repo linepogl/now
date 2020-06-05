@@ -13,7 +13,6 @@ using System.Windows.Shapes;
 namespace Now {
 	public partial class NotificationWindow : Window {
 		private readonly Gmail Gmail;
-		private readonly WebBrowser WebBrowser = new WebBrowser();
 		public event MouseWheelEventHandler MouseWheelHorizontal;
 		public event EventHandler Updated;
 
@@ -84,7 +83,12 @@ namespace Now {
 			BulletsOverflowTextBlock.Visibility = total > max ? Visibility.Visible : Visibility.Hidden;
 			BulletsOverflowTextBlock.Foreground = Index >= max ? BlueBrush : WhiteBrush;
 			IndexTextBlock.Text = (Index + 1).ToString() + " / " + total.ToString();
-			WebBrowser.Body = Message.Body;
+
+			// Visibilities
+			SnippetTextBlock.Visibility = this.Full || Message.IsInvitation ? Visibility.Collapsed : Visibility.Visible;
+			InvitationPanel.Visibility = Message.IsInvitation ? Visibility.Visible : Visibility.Collapsed;
+			BodyWebBrowser.Visibility = this.Full ? Visibility.Visible : Visibility.Collapsed;
+			AttachmentsPanel.Visibility = Message.CountAttachments == 0 ? Visibility.Hidden : Visibility.Visible;
 
 			// Update message
 			SubjectTextBlock.Text = Message.Subject;
@@ -92,22 +96,16 @@ namespace Now {
 			SenderTextBlock.Text = Message.From;
 			SenderTextBlock.ToolTip = Message.From;
 			SnippetTextBlock.Text = Message.Snippet;
-			SnippetTextBlock.Visibility = Message.IsInvitation ? Visibility.Hidden : Visibility.Visible;
-			InvitationPanel.Visibility = !Message.IsInvitation ? Visibility.Hidden : Visibility.Visible;
-
+			if (this.Full) BodyWebBrowser.NavigateToString(Message.Body);
 			RecipientsTextBlock.Text = (Message.To.Count() + Message.CC.Count).ToString();
 			RecipientsPanel.ToolTip = "To\n" + String.Join("\n", Message.To);
-			if (Message.CC.Count > 0) RecipientsPanel.ToolTip += "\n\nCC\n" + String.Join("\n", Message.CC);
-
-			AttachmentsPanel.Visibility = Message.CountAttachments == 0 ? Visibility.Hidden : Visibility.Visible;
 			AttachmentsTextBlock.Text = Message.CountAttachments.ToString();
-
+			if (Message.CC.Count > 0) RecipientsPanel.ToolTip += "\n\nCC\n" + String.Join("\n", Message.CC);
 			if (Message.IsInvitation) {
 				InvitationDateTimeTextBlock.Text = Message.InvitationDateFrom.Value.ToString(@"dddd, d MMM yyyy \a\t HH:mm", System.Globalization.CultureInfo.GetCultureInfo("en-US"));
 				InvitationStartsInTextBlock.Text = Tools.FormatRelativeDateTime(Message.InvitationDateFrom);
 				InvitationDurationTextBlock.Text = Tools.FormatDuration(Message.InvitationDuration);
 			}
-
 			var s = Message.From.TrimStart().TrimStart('"', '<').TrimStart();
 			DropCapTextBlock.Text = (s == "" ? "?" : s.Substring(0, 1)).ToUpper();
 			DropCapEllipsis.Fill = Brushes[Math.Abs(Message.From.GetHashCode()) % Brushes.Length];
@@ -190,7 +188,6 @@ namespace Now {
 		public void AnimateHide() {
 			if (!this.IsVisible) return;
 			if (this.is_hiding) return;
-			WebBrowser.Hide();
 			this.Full = false;
 			this.is_hiding = true;
 			this.Animate(TopProperty, SystemParameters.WorkArea.Height, 0.5);
@@ -224,7 +221,12 @@ namespace Now {
 		private double TargetExtraHeight => this.ReactionLevel == Reaction.None ? 0 : this.ReactionLevel == Reaction.MarkAsRead ? ActionsHeight : 2 * ActionsHeight;
 		private double TargetWidth => this.Full ? ExpandedWidth : StandardWidth;
 		private double TargetHeight => (this.Full ? ExpandedHeight : StandardHeight) + TargetExtraHeight;
-		public bool Full = false;
+
+		private bool _full = false;
+		public bool Full {
+			get => _full;
+			set { _full = value; this.Update(); }
+		}
 
 		private void PositionWindow() {
 			var screen = SystemParameters.WorkArea;
@@ -233,13 +235,6 @@ namespace Now {
 			this.Top = screen.Height - this.Height - 8;
 			this.Left = screen.Width - this.Width - 8;
 			this.ActionsBlock.Height = this.TargetExtraHeight;
-			var webbrowser_top_margin = this.HeaderBlock.ActualHeight + 16;
-			if (Message.IsInvitation) webbrowser_top_margin += this.InvitationPanel.ActualHeight + 16;
-			this.WebBrowser.Top = this.Top + webbrowser_top_margin;
-			this.WebBrowser.Left = this.Left + 112;
-			this.WebBrowser.Width = this.Width - 112 - 8;
-			this.WebBrowser.Height = this.Height - webbrowser_top_margin - 48;
-			if (this.Full) this.WebBrowser.Show(); else this.WebBrowser.Hide();
 		}
 
 		private enum Reaction { None = 0, MarkAsRead = 1, Delete = 2 }
@@ -257,8 +252,6 @@ namespace Now {
 			if (reaction == Reaction.Delete) target_scroll = -1 * ActionsHeight;
 
 			this.Animate(TopProperty, screen.Height - this.TargetHeight - 8, 0.25);
-			if (this.Full)
-			WebBrowser.Animate(TopProperty, screen.Height - this.TargetHeight + this.HeaderBlock.Height + 8, 0.25);
 			this.Animate(HeightProperty, this.TargetHeight, 0.25);
 			this.ActionsBlock.Animate(HeightProperty, this.TargetExtraHeight, 0.25);
 			this.ActionsInnerBlock.Animate(MarginProperty, new Thickness(0, target_scroll, 0, 0), 0.25);
@@ -290,16 +283,7 @@ namespace Now {
 		}
 
 		private void Window_MouseDown(object sender, MouseButtonEventArgs e) {
-			this.ToggleWebBrowser();
-		}
-
-		private void ToggleWebBrowser() {
 			this.Full = !this.Full;
-			this.PositionWindow();
-			if (this.Full) 
-				WebBrowser.Show();
-			else 
-				WebBrowser.Hide();
 		}
 
 		private void Window_SourceInitialized(object sender, EventArgs e) {
