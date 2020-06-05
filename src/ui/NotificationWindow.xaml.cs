@@ -176,6 +176,7 @@ namespace Now {
 
 		public void AnimateShow() {
 			if (this.IsVisible) return;
+			this._full = false;
 			this.PositionWindow();
 			this.Opacity = 0;
 			this.Top = SystemParameters.WorkArea.Height;
@@ -186,10 +187,10 @@ namespace Now {
 		}
 		private bool is_hiding = false;
 		public void AnimateHide() {
+			if (!this.IsVisible) return;
 			if (this.is_hiding) return;
 			this.is_hiding = true;
-			if (!this.IsVisible) return;
-			this.Full = false;
+			this._full = false;
 			this.Animate(TopProperty, SystemParameters.WorkArea.Height, 0.5);
 			this.Animate(OpacityProperty, 0.0, 0.5, () => { this.Hide(); this.is_hiding = false; });
 			this.Updated?.Invoke(this, new EventArgs());
