@@ -186,10 +186,10 @@ namespace Now {
 		}
 		private bool is_hiding = false;
 		public void AnimateHide() {
-			if (!this.IsVisible) return;
 			if (this.is_hiding) return;
-			this.Full = false;
 			this.is_hiding = true;
+			if (!this.IsVisible) return;
+			this.Full = false;
 			this.Animate(TopProperty, SystemParameters.WorkArea.Height, 0.5);
 			this.Animate(OpacityProperty, 0.0, 0.5, () => { this.Hide(); this.is_hiding = false; });
 			this.Updated?.Invoke(this, new EventArgs());
