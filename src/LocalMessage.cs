@@ -14,11 +14,11 @@ namespace Now {
 		public string Subject = "";
 		public string Snippet = "";
 		public string Body = "";
-		public int CountAttachments = 0;
 		public DateTime ReceivedAt = DateTime.MinValue;
 		public string From = "";
 		public List<string> To = new List<string>();
 		public List<string> CC = new List<string>();
+		public List<string> Attachments = new List<string>();
 		public bool Marked = false;
 		public readonly List<LocalLabel> Labels = new List<LocalLabel>();
 		public DateTime? InvitationDateFrom = null;
@@ -72,7 +72,7 @@ namespace Now {
 				}
 			}
 
-			this.CountAttachments = parts.Count(part => part.Filename != null && part.Filename != "" && part.Filename != "invite.ics");
+			this.Attachments = parts.Select(x => x.Filename).Where(x => x != null && x != "" && x != "invite.ics").ToList();
 
 			var invitation_attachment_id = parts.FirstOrDefault(x => x?.Filename == "invite.ics")?.Body?.AttachmentId;
 			if (invitation_attachment_id != null) {

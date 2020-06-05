@@ -7,7 +7,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
-using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 
 namespace Now {
@@ -88,7 +87,7 @@ namespace Now {
 			SnippetTextBlock.Visibility = this.Full || Message.IsInvitation ? Visibility.Collapsed : Visibility.Visible;
 			InvitationPanel.Visibility = Message.IsInvitation ? Visibility.Visible : Visibility.Collapsed;
 			BodyWebBrowser.Visibility = this.Full ? Visibility.Visible : Visibility.Collapsed;
-			AttachmentsPanel.Visibility = Message.CountAttachments == 0 ? Visibility.Hidden : Visibility.Visible;
+			AttachmentsPanel.Visibility = Message.Attachments.Count == 0 ? Visibility.Hidden : Visibility.Visible;
 
 			// Update message
 			SubjectTextBlock.Text = Message.Subject;
@@ -99,8 +98,9 @@ namespace Now {
 			if (this.Full) BodyWebBrowser.NavigateToString(Message.Body);
 			RecipientsTextBlock.Text = (Message.To.Count() + Message.CC.Count).ToString();
 			RecipientsPanel.ToolTip = "To\n" + String.Join("\n", Message.To);
-			AttachmentsTextBlock.Text = Message.CountAttachments.ToString();
 			if (Message.CC.Count > 0) RecipientsPanel.ToolTip += "\n\nCC\n" + String.Join("\n", Message.CC);
+			AttachmentsTextBlock.Text = Message.Attachments.Count.ToString();
+			AttachmentsPanel.ToolTip = String.Join("\n", Message.Attachments);
 			if (Message.IsInvitation) {
 				InvitationDateTimeTextBlock.Text = Message.InvitationDateFrom.Value.ToString(@"dddd, d MMM yyyy \a\t HH:mm", System.Globalization.CultureInfo.GetCultureInfo("en-US"));
 				InvitationStartsInTextBlock.Text = Tools.FormatRelativeDateTime(Message.InvitationDateFrom);
